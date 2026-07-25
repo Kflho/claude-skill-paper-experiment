@@ -60,7 +60,6 @@ git clone https://github.com/mattpocock/skills.git ~/.agents/skills
 │   └── FORMAT.md             ←   Obsidian 输出格式规范
 ├── templates/                ← 项目配置模板
 │   └── CLAUDE-template.md    ←   占位符模板
-└── INIT.md                   ← 旧版初始化流程（已被 first-run.md 取代）
 ```
 
 > 🤖 **AI 注意**：入口是 `SKILL.md`，不是这个文件。从 SKILL.md 的「首次使用？」段开始执行。

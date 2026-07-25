@@ -12,20 +12,24 @@
 
 ```
 <project_repo_root>/
-  Function/     # 可复用函数
-  Script/       # 可复用脚本
-  Test/         # 单元测试
-  Main/         # 实验入口
-  Output/       # 实验产出
-  参考文献/      # 论文 PDF + markdown
+  Common/                       # 跨项目共享（与 Project/ 同级）
+  Project/
+    [Category]/                 # 可选分类层（如 Postgraduate/）
+      Project_XX/
+        Function/               # 可复用函数
+        Script/                 # 可复用脚本
+        Test/                   # 单元测试
+        Main/                   # 实验入口
+        Output/                 # 实验产出
+        参考文献/                 # 论文 PDF + markdown
 ```
 
 ## 路径添加（MATLAB）
 
-从 Main/、Script/ 等子文件夹内运行脚本时：
+从 Main/、Script/ 等子文件夹内运行脚本时，需要添加 Common 路径。**`<N>` 层数由初始化时现场计算**（从项目 Script/ 回到仓库根需要几层 `../`）：
 
 ```matlab
-addpath(genpath('../../../Common/'));
+addpath(genpath('<N层../>Common/'));   % 初始化时计算填入，如 ../../../../Common/
 addpath(genpath('../Function/'));
 addpath(genpath('../Script/'));
 ```

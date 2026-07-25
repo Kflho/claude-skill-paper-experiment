@@ -140,7 +140,7 @@ Output/
 
 ---
 
-## Step 4：收集项目仓库路径
+## Step 4：收集项目仓库路径与计算 MATLAB 路径深度
 
 向用户提问：
 
@@ -156,7 +156,36 @@ test -d "<repo>/Function" && test -d "<repo>/Script" && echo "[MATLAB project]"
 test -f "<repo>/pyproject.toml" && echo "[Python project]"
 ```
 
-检测到 MATLAB 项目时，在 CLAUDE.md 中写入 MATLAB 路径添加规则。
+### 4.1 MATLAB 项目：计算 Common 路径深度
+
+**关键**：不要写死 `../../` 层数。每个项目的 Script/ 到仓库根的距离不同。
+
+计算方法：
+
+1. 确定两个绝对路径：`<project>/Script/` 和 `<repo_root>/`（即 Common/ 的父目录）
+2. 计算从 Script/ 回到 repo_root 需要几层 `../`
+3. 把结果写入项目 CLAUDE.md 的路径添加段
+
+示例：若项目在 `<repo_root>/Project/Postgraduate/Project_01/`：
+
+```
+Script/ 绝对路径:  <repo_root>/Project/Postgraduate/Project_01/Script/
+回到 <repo_root>:  ../  → Project_01/
+                   ../../  → Postgraduate/
+                   ../../../  → Project/
+                   ../../../../  → <repo_root>/
+需要: ../../../../Common/
+```
+
+生成的 addpath 行：
+
+```matlab
+addpath(genpath('../../../../Common/'));   % 4 层 — 由初始化计算得出
+addpath(genpath('../Function/'));
+addpath(genpath('../Script/'));
+```
+
+若项目直接在 `<repo_root>/Project/Project_XX/`（无 Category 层），则为 `../../../Common/`。**每次初始化都重新计算，不要照搬其他项目的数字。**
 
 ---
 

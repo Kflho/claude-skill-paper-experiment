@@ -113,18 +113,21 @@ All output must match the user's Obsidian conventions exactly so text is copy-pa
 When mapping research workflow to filesystem, apply this template:
 
 ```
-Common/                          # Cross-project shared code
-[Middle_layer]/                  # Optional: organizational grouping (e.g. Postgraduate_project/)
-  Project_XX_descriptor/         # Individual project
-    Function/                    # Non-runnable functions — must be called by others
-    Script/                      # Runnable standalone scripts; may also be called
-    Test/                        # Flat directory, temporary unit tests
-    Main/
-      Target_XX/                 # Experiment targets grouped by objective
-    Output/
-      Experiment_XX_descriptor/  # Per-experiment outputs: data + figures
+Common/                          # Cross-project shared code (sibling of Project/)
+Project/                         # All projects — fixed layer, prevents project sprawl
+  [Category]/                    # Optional: organizational grouping (e.g. Postgraduate/)
+    Project_XX_descriptor/       # Individual project
+      Function/                  # Non-runnable functions — must be called by others
+      Script/                    # Runnable standalone scripts; may also be called
+      Test/                      # Flat directory, temporary unit tests
+      Main/
+        Target_XX/               # Experiment targets grouped by objective
+      Output/
+        Experiment_XX_descriptor/  # Per-experiment outputs: data + figures
 ```
 
 **File naming:** `CapitalCase_underscore_separated`. Numbered prefixes: `Test_01_` / `Experiment_01_`. MATLAB constraint: files must start with a letter. Experiment name and figure name are the only per-experiment variables.
 
 **Code formatting:** variable and function names follow the same CapitalCase convention. Inline formatting rules (Chinese-English spacing, bracket annotations, colon notes) match [FORMAT.md](FORMAT.md).
+
+**MATLAB path depth:** The `genpath('.../Common/')` prefix depends on how deep the project sits under the repo root. During initialization, compute the depth from `<project>/Script/` up to the repo root and write the concrete `addpath` line into the project's CLAUDE.md. The template in `templates/CLAUDE-template.md` uses a placeholder — do not hardcode `../../`.
