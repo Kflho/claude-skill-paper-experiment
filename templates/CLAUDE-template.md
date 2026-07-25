@@ -11,25 +11,21 @@
 ## 项目仓库
 
 ```
-<project_repo_root>/
-  Common/                       # 跨项目共享（与 Project/ 同级）
+<project_root>/                  # 用户指定的项目根目录（所有依赖的公共祖先）
+  Common/                        # 跨项目共享（如存在）
   Project/
-    [Category]/                 # 可选分类层（如 Postgraduate/）
+    [Category]/
       Project_XX/
-        Function/               # 可复用函数
-        Script/                 # 可复用脚本
-        Test/                   # 单元测试
-        Main/                   # 实验入口
-        Output/                 # 实验产出
-        参考文献/                 # 论文 PDF + markdown
+        ...                      # 实际目录由初始化扫描确定
 ```
 
 ## 路径添加（MATLAB）
 
-从 Main/、Script/ 等子文件夹内运行脚本时，需要添加 Common 路径。**`<N>` 层数由初始化时现场计算**（从项目 Script/ 回到仓库根需要几层 `../`）：
+以下路径由初始化时扫描项目根目录自动生成，**不做预设**：
 
 ```matlab
-addpath(genpath('<N层../>Common/'));   % 初始化时计算填入，如 ../../../../Common/
+% 初始化时扫描 <project_root> 下所有含 .m 的文件夹，计算相对路径后填入
+addpath(genpath('<../到 Common 的层数>/Common/'));
 addpath(genpath('../Function/'));
 addpath(genpath('../Script/'));
 ```

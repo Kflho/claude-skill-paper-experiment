@@ -110,24 +110,18 @@ All output must match the user's Obsidian conventions exactly so text is copy-pa
 
 ## Project structure
 
-When mapping research workflow to filesystem, apply this template:
+此 skill 创建新项目时默认采用以下约定。**这不是强制规范**——用户现有项目的目录组织可以完全不同。初始化时 skill 会扫描项目的实际目录结构，自动生成正确的 `addpath` 行，不对目录名做任何假设。
 
 ```
-Common/                          # Cross-project shared code (sibling of Project/)
-Project/                         # All projects — fixed layer, prevents project sprawl
-  [Category]/                    # Optional: organizational grouping (e.g. Postgraduate/)
-    Project_XX_descriptor/       # Individual project
-      Function/                  # Non-runnable functions — must be called by others
-      Script/                    # Runnable standalone scripts; may also be called
-      Test/                      # Flat directory, temporary unit tests
-      Main/
-        Target_XX/               # Experiment targets grouped by objective
-      Output/
-        Experiment_XX_descriptor/  # Per-experiment outputs: data + figures
+Common/                          # 跨项目共享代码（与 Project/ 同级）
+Project/                         # 所有项目（固定层，防止摊平）
+  [Category]/                    # 可选分类
+    Project_XX_descriptor/       # 单个项目
+      Function/   Script/   Test/   Main/   Output/   ...
 ```
 
-**File naming:** `CapitalCase_underscore_separated`. Numbered prefixes: `Test_01_` / `Experiment_01_`. MATLAB constraint: files must start with a letter. Experiment name and figure name are the only per-experiment variables.
+默认约定的命名规则：`CapitalCase_underscore_separated`。数字前缀：`Test_01_` / `Experiment_01_`。MATLAB 约束：文件名必须以字母开头。
 
 **Code formatting:** variable and function names follow the same CapitalCase convention. Inline formatting rules (Chinese-English spacing, bracket annotations, colon notes) match [FORMAT.md](FORMAT.md).
 
-**MATLAB path depth:** The `genpath('.../Common/')` prefix depends on how deep the project sits under the repo root. During initialization, compute the depth from `<project>/Script/` up to the repo root and write the concrete `addpath` line into the project's CLAUDE.md. The template in `templates/CLAUDE-template.md` uses a placeholder — do not hardcode `../../`.
+**MATLAB 路径**：初始化时由用户指定项目根目录（所有依赖的公共祖先），Claude 扫描该目录下所有含 `.m` 文件的子文件夹，自动计算相对路径并写入项目 CLAUDE.md。不预设 `Common/`、`Function/` 等名字。

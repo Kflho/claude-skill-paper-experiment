@@ -140,52 +140,63 @@ Output/
 
 ---
 
-## Step 4：收集项目仓库路径与计算 MATLAB 路径深度
+## Step 4：收集项目根目录并自动扫描 MATLAB 路径
 
 向用户提问：
 
-> 你的项目代码在哪个目录？
+> 你的项目根目录在哪里？——即包含所有代码依赖的顶层目录。
+>
+> （例如 `D:/Data/.../Matlab/`，其下有 `Common/`、`Project/` 等）
 >
 > 不确定可以留空，后续在 CLAUDE.md 中手动补充。
 
-如果用户提供路径，验证目录存在。检测项目类型：
+### 4.1 扫描所有含 .m 的文件夹
+
+拿到根目录后，扫描其下所有包含 `.m` 文件的文件夹（排除 `.git/`、`.Old/`、`Output/`、`node_modules/` 等）：
 
 ```bash
-# 自动检测
-test -d "<repo>/Function" && test -d "<repo>/Script" && echo "[MATLAB project]"
-test -f "<repo>/pyproject.toml" && echo "[Python project]"
+find "<root>" -name "*.m" -not -path "*/.git/*" -not -path "*/.Old/*" \
+  -not -path "*/Output/*" | sed 's|/[^/]*\.m$||' | sort -u
 ```
 
-### 4.1 MATLAB 项目：计算 Common 路径深度
-
-**关键**：不要写死 `../../` 层数。每个项目的 Script/ 到仓库根的距离不同。
-
-计算方法：
-
-1. 确定两个绝对路径：`<project>/Script/` 和 `<repo_root>/`（即 Common/ 的父目录）
-2. 计算从 Script/ 回到 repo_root 需要几层 `../`
-3. 把结果写入项目 CLAUDE.md 的路径添加段
-
-示例：若项目在 `<repo_root>/Project/Postgraduate/Project_01/`：
-
+这会得到类似：
 ```
-Script/ 绝对路径:  <repo_root>/Project/Postgraduate/Project_01/Script/
-回到 <repo_root>:  ../  → Project_01/
-                   ../../  → Postgraduate/
-                   ../../../  → Project/
-                   ../../../../  → <repo_root>/
-需要: ../../../../Common/
+<root>/Common/Calculate
+<root>/Common/Visualization
+<root>/Project/Postgraduate/Project_01/Function
+<root>/Project/Postgraduate/Project_01/Script
+<root>/Project/Postgraduate/Project_01/Test
+<root>/Project/Postgraduate/Project_01/Main
 ```
 
-生成的 addpath 行：
+### 4.2 确定项目工作目录
+
+向用户确认：
+
+> 你的实验代码（Main、Script）从哪个项目目录运行？
+>
+> 默认是当前工作目录。如果扫描到多个项目，让用户选一个。
+
+### 4.3 计算所有 addpath 行
+
+对 4.1 得到的每个目录，计算从 4.2 的项目工作目录出发的相对路径，生成完整的 `addpath` 列表。**不预设目录名**——`Common/`、`Function/`、`Script/` 都只是用户碰巧用的名字，不是规则。
+
+计算逻辑：
+1. 项目工作目录绝对路径 = `<project_dir>/Script/`（或用户指定的入口目录）
+2. 对每个含 `.m` 的目录，计算 `relpath(project_dir, target_dir)` → `../` 层数 + 子路径
+3. 用 `genpath` 包裹以递归包含子目录
+
+生成的 addpath 块示例：
 
 ```matlab
-addpath(genpath('../../../../Common/'));   % 4 层 — 由初始化计算得出
+addpath(genpath('../../../../Common/'));
 addpath(genpath('../Function/'));
 addpath(genpath('../Script/'));
 ```
 
-若项目直接在 `<repo_root>/Project/Project_XX/`（无 Category 层），则为 `../../../Common/`。**每次初始化都重新计算，不要照搬其他项目的数字。**
+### 4.4 写入项目 CLAUDE.md
+
+将生成的 addpath 块写入 CLAUDE.md 的 `## 路径添加（MATLAB）` 段，每行加注释标注该目录的角色（共享库 / 项目函数 / 项目脚本 / ...），注释由 Claude 根据目录名推断，不做硬性分类。
 
 ---
 
