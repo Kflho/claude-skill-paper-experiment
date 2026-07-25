@@ -110,18 +110,24 @@ All output must match the user's Obsidian conventions exactly so text is copy-pa
 
 ## Project structure
 
-此 skill 创建新项目时默认采用以下约定。**这不是强制规范**——用户现有项目的目录组织可以完全不同。初始化时 skill 会扫描项目的实际目录结构，自动生成正确的 `addpath` 行，不对目录名做任何假设。
+此 skill 创建新项目时默认采用以下约定。若用户已有现成项目结构，初始化时扫描实际目录自动适配。
 
 ```
 Common/                          # 跨项目共享代码（与 Project/ 同级）
 Project/                         # 所有项目（固定层，防止摊平）
-  [Category]/                    # 可选分类
+  [Category]/                    # 可选分类（如 Postgraduate/）
     Project_XX_descriptor/       # 单个项目
-      Function/   Script/   Test/   Main/   Output/   ...
+      Function/                  # 可复用函数（不可独立运行）
+      Script/                    # 可复用脚本（可独立运行，也可被调用）
+      Test/                      # 单元测试（扁平）
+      Main/
+        Target_XX/               # 按实验目标分组的入口
+      Output/
+        Experiment_XX_descriptor/  # 按实验分组的产出
 ```
 
-默认约定的命名规则：`CapitalCase_underscore_separated`。数字前缀：`Test_01_` / `Experiment_01_`。MATLAB 约束：文件名必须以字母开头。
+**File naming:** `CapitalCase_underscore_separated`。数字前缀：`Test_01_` / `Experiment_01_`。MATLAB 约束：文件名必须以字母开头。
 
 **Code formatting:** variable and function names follow the same CapitalCase convention. Inline formatting rules (Chinese-English spacing, bracket annotations, colon notes) match [FORMAT.md](FORMAT.md).
 
-**MATLAB 路径**：初始化时由用户指定项目根目录（所有依赖的公共祖先），Claude 扫描该目录下所有含 `.m` 文件的子文件夹，自动计算相对路径并写入项目 CLAUDE.md。不预设 `Common/`、`Function/` 等名字。
+**MATLAB 路径**：初始化时由用户指定项目根目录（所有依赖的公共祖先），Claude 扫描该目录下所有含 `.m` 文件的子文件夹，自动计算相对路径并写入项目 CLAUDE.md。不预设目录名——`Common/`、`Function/`、`Script/` 只是默认约定的名字。
