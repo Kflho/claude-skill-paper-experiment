@@ -7,30 +7,78 @@ description: Scientific research workflow — experiment design, paper analysis,
 
 **Leading words:** 论文 (paper analysis), 文献 (literature review), 实验设计 (experiment design), 课题/项目目标 (research objective), 方法论/科研流程 (methodology), Note (project note), Schedule (daily log), 参考文献 (literature notes), Target (experiment target).
 
+## 首次使用？
+
+检查项目 CLAUDE.md 末尾是否有 `## SKILL INITIALIZED: true`。
+
+**没有** → 首次使用。读取 `references/first-run.md`，跟随 9 步初始化向导完成配置后再继续。
+
+**有** → 已初始化。从 CLAUDE.md 获取三文件路径，直接进入阶段路由。
+
+> 如需重新初始化（更换 vault、添加新项目等），删除 CLAUDE.md 中的 `SKILL INITIALIZED: true` 行即可。
+
+## 环境设置
+
+首次使用或更换环境 → [references/setup.md](references/setup.md)（mattpocock/skills 安装、git 备份铁律、MATLAB 验证）。
+
+已验证过的项目跳过，直接从 CLAUDE.md 读取配置。Git 备份铁律：**运行批量实验/重构前必须 `git add -A && git commit`** —— 实验代码迭代快，git 是唯一保险。
+
+---
+
 ## Three-file workflow
 
-Three project files live in the user's Obsidian vault. **Read only — never write.** The user maintains all three manually.
+Three project files live somewhere in the user's Obsidian vault. **Read only — never write.** The user maintains all three manually. Actual paths are recorded in the project's CLAUDE.md during [Project initialization](#project-initialization).
 
-| File | Sections | When to read |
+| Role | Sections | When to read |
 |---|---|---|
-| `Project XX Note.md` | 目标 → 参考 → 流程 → 架构 → 总结 → 问题 | User discusses project goals, experiment design, or architecture mapping |
-| `Project XX 参考文献.md` | 论文解读 → 论文方法 | User asks about paper content, methodology, or technical implementation |
-| `Project XX Schedule.md` | Date headers `# MM.DD`, task lists | User asks "今天做什么" or needs progress-aware suggestions |
+| **Note** | 目标 → 参考 → 流程 → 架构 → 总结 → 问题 | User discusses project goals, experiment design, or architecture mapping |
+| **参考文献** | 论文解读 → 论文方法 | User asks about paper content, methodology, or technical implementation |
+| **Schedule** | Date headers `# MM.DD`, task lists | User asks "今天做什么" or needs progress-aware suggestions |
 
-**First project entry:** ask where these three files live, record paths in the project's CLAUDE.md.
+The user may name and locate these files however they like — initialization records the actual paths. The default convention is `Project XX Note.md` / `Project XX 参考文献.md` / `Project XX Schedule.md` at the vault root, but any path within the vault is valid.
+
+## Project initialization
+
+Before any phase routing, verify that file paths for the current project are known. If the project's CLAUDE.md lacks a `## Scientific Research Paths` section, run the full initialization flow in [references/first-run.md](references/first-run.md). If already initialized, read paths from CLAUDE.md and proceed.
+
+---
 
 ## Phase routing
+
+Before routing to a phase, **always** check: are file paths initialized for this project? If not, run Project initialization first.
 
 Identify the user's current research phase from their prompt, then act:
 
 | Phase | Trigger examples | Read | Invoke sub-skills | AI action |
 |---|---|---|---|---|
-| Paper analysis | 读论文, 解读文献, literature review | 参考文献 | `deep-research`, `research` | Interpret paper; surface gaps and open questions |
-| Objective setting | 项目目标, 课题方向, research objective | Note | `grilling` | Propose research objectives grounded in paper findings |
-| Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `deep-research` | Design experiments to validate each objective; justify method choices |
-| Methodology | 怎么实现, 技术细节, method | 参考文献 | — | Answer with technical explanation; attribute output to doc section |
+| Paper analysis | 读论文, 解读文献, literature review | 参考文献 | `pdf-converter`, `research`, `grilling` | Interpret paper; surface gaps and open questions |
+| Objective setting | 项目目标, 课题方向, research objective | Note | `grilling`, `writing-great-skills` | Propose research objectives grounded in paper findings |
+| Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `research`, `prototype`, `dataviz` | Design experiments to validate each objective; justify method choices |
+| Methodology | 怎么实现, 技术细节, method | 参考文献 | `codebase-design`, `tdd` | Answer with technical explanation; attribute output to doc section |
 | Architecture mapping | 项目架构, 文件结构 | Note | — | Map research workflow to folder structure (see Project structure below) |
 | Task planning | 今天做什么, 进度, plan | Note + Schedule | — | Suggest today's tasks based on Note goals and Schedule history |
+
+## Paper reference
+
+Each paper lives in its own subfolder under `参考文献/`, named after the paper title (PDF filename without `.pdf`):
+
+```
+参考文献/
+  <Paper Title>/
+    <Paper Title>.pdf      # original PDF
+    paper_full.md           # full paper text (markdown)
+    paper_p1-5.md           # first 5 pages (markdown, optional)
+```
+
+When the user asks to reference a paper, read a PDF, or consult 参考文献 for technical details:
+
+1. Look for a matching subfolder under `参考文献/` — match by paper title keywords.
+2. **If the subfolder with `.md` exists** → read the markdown directly with Read (prefer `paper_full.md`).
+3. **If subfolder missing or has PDF only** → invoke `pdf-converter` to create the folder and convert to markdown.
+
+The Obsidian `Project XX 参考文献.md` is the user's own interpretation notes (read-only for AI). The markdown under `参考文献/` is the raw paper text for AI consumption during methodology and experiment design phases.
+
+---
 
 ## Output attribution
 
