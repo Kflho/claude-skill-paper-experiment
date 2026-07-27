@@ -25,16 +25,42 @@
         ...                      # 实际目录由初始化扫描确定
 ```
 
-## 路径添加（MATLAB）
+## 路径规范
 
-以下路径由初始化时扫描项目根目录自动生成，**不做预设**：
+**强制规则：所有路径必须使用相对路径，禁止硬编码绝对路径（如 `D:\data\...`）。** 保证整个项目根目录移动到任意位置后脚本仍可正常运行。
+
+### 路径解析表
+
+初始化时扫描项目根目录自动生成。以下为示例（从 `src/main/`、`src/tests/`、`src/scripts/` 出发）：
+
+| 相对路径 | 解析目标 |
+|---|---|
+| `<../到 utils 的层数>/utils/` | 仓库根工具库 |
+| `../lib/` | 项目内部函数 |
+| `../scripts/` | 可复用脚本 |
+| `../../outputs/experiment_XX_xxx/` | 实验产出目录（含 `figures/`、`data/`） |
+
+### 路径添加（MATLAB）
 
 ```matlab
 % 初始化时扫描 <project_root> 下所有含 .m 的文件夹，计算相对路径后填入
 addpath(genpath('<../到 utils 的层数>/utils/'));
-addpath(genpath('../src/lib/'));
-addpath(genpath('../src/scripts/'));
+addpath(genpath('../lib/'));
+addpath(genpath('../scripts/'));
 ```
+
+### 读写文件
+
+产出保存到 `../../outputs/experiment_XX_xxx/` 下对应子文件夹，禁止写到项目外路径。
+
+```matlab
+out_pic = '../../outputs/experiment_01_xxx/figures/';
+out_data = '../../outputs/experiment_01_xxx/data/';
+if ~exist(out_pic, 'dir'), mkdir(out_pic); end
+save([out_data 'results.mat'], ...);
+```
+
+> **注意：** MATLAB 的 `addpath` 相对路径基于 `pwd`（当前工作目录），非脚本文件位置。务必从脚本所在目录运行（`cd` 到 `src/main/` / `src/tests/` / `src/scripts/` 后再执行），否则相对路径会解析错误。
 
 ## Git
 
