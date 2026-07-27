@@ -12,10 +12,16 @@
 
 ```
 <project_root>/                  # 用户指定的项目根目录（所有依赖的公共祖先）
-  Common/                        # 跨项目共享（如存在）
-  Project/
-    [Category]/
-      Project_XX/
+  utils/                         # 跨项目共享（如存在）
+  projects/
+    [category]/
+      project_XX/
+        src/
+          lib/                   # 项目内部函数依赖
+          scripts/               # 可复用脚本
+          tests/                 # 单元测试
+          main/                  # 实验入口
+        outputs/                  # 实验产出
         ...                      # 实际目录由初始化扫描确定
 ```
 
@@ -25,9 +31,9 @@
 
 ```matlab
 % 初始化时扫描 <project_root> 下所有含 .m 的文件夹，计算相对路径后填入
-addpath(genpath('<../到 Common 的层数>/Common/'));
-addpath(genpath('../Function/'));
-addpath(genpath('../Script/'));
+addpath(genpath('<../到 utils 的层数>/utils/'));
+addpath(genpath('../src/lib/'));
+addpath(genpath('../src/scripts/'));
 ```
 
 ## Git

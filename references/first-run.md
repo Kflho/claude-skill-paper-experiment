@@ -120,7 +120,7 @@ __pycache__/
 *.pyc
 
 # 实验产出（数据大，不追踪）
-Output/
+outputs/
 
 # Obsidian（不在代码仓内）
 .obsidian/
@@ -134,7 +134,7 @@ Output/
 > git add -A && git commit -m "备份：<操作>前 — $(date +%Y-%m-%d)"
 > ```
 >
-> 参考字幕校对 skill 的做法——pipeline 原地覆写文件，不可逆，git 是唯一保险。
+> 详细规则见 [setup.md](setup.md)。参考字幕校对 skill 的做法——pipeline 原地覆写文件，不可逆，git 是唯一保险。
 
 写入 CLAUDE.md 的 git 段。
 
@@ -146,52 +146,52 @@ Output/
 
 > 你的项目根目录在哪里？——即包含所有代码依赖的顶层目录。
 >
-> （例如 `D:/Data/.../Matlab/`，其下有 `Common/`、`Project/` 等）
+> （例如 `D:/Data/.../Matlab/`，其下有 `utils/`、`projects/` 等）
 >
 > 不确定可以留空，后续在 CLAUDE.md 中手动补充。
 
 ### 4.1 扫描所有含 .m 的文件夹
 
-拿到根目录后，扫描其下所有包含 `.m` 文件的文件夹（排除 `.git/`、`.Old/`、`Output/`、`node_modules/` 等）：
+拿到根目录后，扫描其下所有包含 `.m` 文件的文件夹（排除 `.git/`、`.Old/`、`Output/`、`outputs/`、`node_modules/` 等）：
 
 ```bash
 find "<root>" -name "*.m" -not -path "*/.git/*" -not -path "*/.Old/*" \
-  -not -path "*/Output/*" | sed 's|/[^/]*\.m$||' | sort -u
+  -not -path "*/Output/*" -not -path "*/outputs/*" | sed 's|/[^/]*\.m$||' | sort -u
 ```
 
 这会得到类似：
 ```
-<root>/Common/Calculate
-<root>/Common/Visualization
-<root>/Project/Postgraduate/Project_01/Function
-<root>/Project/Postgraduate/Project_01/Script
-<root>/Project/Postgraduate/Project_01/Test
-<root>/Project/Postgraduate/Project_01/Main
+<root>/utils/calculations
+<root>/utils/visualizations
+<root>/projects/postgraduate/project_01/src/lib
+<root>/projects/postgraduate/project_01/src/scripts
+<root>/projects/postgraduate/project_01/src/tests
+<root>/projects/postgraduate/project_01/src/main
 ```
 
 ### 4.2 确定项目工作目录
 
 向用户确认：
 
-> 你的实验代码（Main、Script）从哪个项目目录运行？
+> 你的实验代码（main、scripts）从哪个项目目录运行？
 >
 > 默认是当前工作目录。如果扫描到多个项目，让用户选一个。
 
 ### 4.3 计算所有 addpath 行
 
-对 4.1 得到的每个目录，计算从 4.2 的项目工作目录出发的相对路径，生成完整的 `addpath` 列表。**不预设目录名**——`Common/`、`Function/`、`Script/` 都只是用户碰巧用的名字，不是规则。
+对 4.1 得到的每个目录，计算从 4.2 的项目工作目录出发的相对路径，生成完整的 `addpath` 列表。**不预设目录名**——`utils/`、`src/lib/`、`src/scripts/` 都只是用户碰巧用的名字，不是规则。
 
 计算逻辑：
-1. 项目工作目录绝对路径 = `<project_dir>/Script/`（或用户指定的入口目录）
+1. 项目工作目录绝对路径 = `<project_dir>/src/scripts/`（或用户指定的入口目录）
 2. 对每个含 `.m` 的目录，计算 `relpath(project_dir, target_dir)` → `../` 层数 + 子路径
 3. 用 `genpath` 包裹以递归包含子目录
 
 生成的 addpath 块示例：
 
 ```matlab
-addpath(genpath('../../../../Common/'));
-addpath(genpath('../Function/'));
-addpath(genpath('../Script/'));
+addpath(genpath('<../到 utils 的层数>/utils/'));
+addpath(genpath('../src/lib/'));
+addpath(genpath('../src/scripts/'));
 ```
 
 ### 4.4 写入项目 CLAUDE.md
