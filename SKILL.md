@@ -54,7 +54,7 @@ description: Scientific research workflow — experiment design, paper analysis,
 | Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `research`, `prototype`, `dataviz` | 设计实验验证目标。每个实验的目标字段引用 Note 目标编号。实验通过后标记对应复选框 |
 | Methodology | 怎么实现, 技术细节, method | 参考文献 | `codebase-design`, `tdd` | 技术解答，归属到论文章节。[代码格式化脚本 →](references/scripts.md) |
 | Architecture mapping | 项目架构, 文件结构 | Note | — | 映射研究流程到文件夹结构。[项目结构规范 →](references/project-structure.md) |
-| Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读取 Schedule 最新日期下未完成任务，自动实现。**写→格式化→跑**，完成后执行[任务完成同步 →](references/task-completion-sync.md)。支持 `matlab -batch` 验证 |
+| Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读取 Schedule 最新日期下未完成任务，自动实现。**写→格式化→跑**，跑通后自动复盘操作问题（通用→skill，本项目→CLAUDE.md），执行[任务完成同步 →](references/task-completion-sync.md) |
 | Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
 
 ---
