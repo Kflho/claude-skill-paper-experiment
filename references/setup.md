@@ -36,7 +36,7 @@ test -d ~/.claude/skills/pdf-converter && echo "[OK] pdf-converter" || echo "[MI
 
 ## Git 备份（铁律）
 
-**每次运行会修改文件的脚本前（批量实验、代码重构、skill-activator 修改），必须 git commit 备份。**
+**每次运行会修改文件的脚本前（批量实验、代码重构），必须 git commit 备份。**
 
 ```bash
 cd "<project-repo>"

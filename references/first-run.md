@@ -227,54 +227,7 @@ ls "<repo>/参考文献/" 2>/dev/null
 
 ---
 
-## Step 6：配置 skill-activator 规则
-
-向用户说明：
-
-> 科研工作流需要在 `~/.claude/skill-rules.json` 中注册自动激活规则，这样输入"设计实验"时会自动触发相关 skill。
-
-已存在的规则不再添加。只追加缺失项。
-
-**核心科研 skill**（始终推荐）：
-
-| Skill | 触发场景 |
-|-------|----------|
-| `scientific-research` | 论文/文献/实验设计/课题/方法论/科研流程 |
-| `pdf-converter` | PDF/论文转换/读论文/提取内容 |
-| `writing-great-skills` | 写 skill/修改 skill/更新 skill |
-
-**阶段相关 skill**（推荐）：
-
-| Skill | 触发场景 |
-|-------|----------|
-| `grilling` | 方案评估/压力测试/trade-off/敲定方向 |
-| `research` | 调研/查资料/搜索信息 |
-| `prototype` | 原型/快速验证/sanity check |
-| `dataviz` | 图表/可视化/绘图/dashboard |
-| `tdd` | 测试驱动/写测试/单元测试 |
-| `code-review` | 代码审查/审查变更 |
-| `diagnosing-bugs` | bug/报错/异常/崩溃/诊断 |
-| `codebase-design` | 设计/架构/重构/接口设计 |
-| `git-guardrails-claude-code` | git push/reset --hard/force push 等危险操作 |
-
-> 是否全部添加？（y/n）**推荐 y**。
->
-> - **y** → 自动补全所有缺失规则
-> - **n** → 只补核心三项（scientific-research, pdf-converter, writing-great-skills）
-> - **逐个选择** → 我列出每项，你逐条确认
-
-写入 `skill-rules.json` 后验证 JSON 有效：
-
-```bash
-python -c "import json; json.load(open('$HOME/.claude/skill-rules.json', encoding='utf-8')); print('Valid JSON')"
-```
-
-> ⚠️ 修改前自动 git 备份 `skill-rules.json`（如果 `~/.claude/` 是 git 仓库）。
-> ⚠️ 绝不覆盖用户已有的规则。只追加缺失项。
-
----
-
-## Step 7：推荐安装 mattpocock/skills
+## Step 6：推荐安装 mattpocock/skills
 
 检测 `writing-great-skills` 是否已安装：
 
@@ -296,7 +249,7 @@ test -d ~/.claude/skills/writing-great-skills && echo "installed" || echo "missi
 
 ---
 
-## Step 8：生成 CLAUDE.md
+## Step 7：生成 CLAUDE.md
 
 读取 `templates/CLAUDE-template.md`，将用户的回答填入占位符。
 
@@ -306,7 +259,7 @@ test -d ~/.claude/skills/writing-great-skills && echo "installed" || echo "missi
 
 ---
 
-## Step 9：完成
+## Step 8：完成
 
 告知用户初始化完成，摘要配置：
 
@@ -319,7 +272,6 @@ test -d ~/.claude/skills/writing-great-skills && echo "installed" || echo "missi
 > - 仓库: <repo>
 > - Git: <已初始化/已是仓库/已跳过>
 > - 论文目录: <有/无>
-> - skill-activator: <N 条规则已添加/已跳过>
 >
 > 下次运行 skill 时将直接进入科研工作流。如需重新初始化，删除 CLAUDE.md 中的 `SKILL INITIALIZED: true` 行即可。
 

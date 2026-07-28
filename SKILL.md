@@ -55,6 +55,7 @@ description: Scientific research workflow — experiment design, paper analysis,
 | Methodology | 怎么实现, 技术细节, method | 参考文献 | `codebase-design`, `tdd` | 技术解答，归属到论文章节。[代码格式化脚本 →](references/scripts.md) |
 | Architecture mapping | 项目架构, 文件结构 | Note | — | 映射研究流程到文件夹结构。[项目结构规范 →](references/project-structure.md) |
 | Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读取 Schedule 最新日期下未完成任务，自动实现。完成后执行[任务完成同步 →](references/task-completion-sync.md)。支持 `matlab -batch` 验证 |
+| Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。→ [references/fan-out-writing.md](references/fan-out-writing.md) |
 
 ---
 
@@ -77,7 +78,7 @@ description: Scientific research workflow — experiment design, paper analysis,
 
 所有输出遵循 Obsidian 格式规范 → [FORMAT.md](FORMAT.md)。
 
-写完 MATLAB 代码后运行 `fix_m_code.py` 规范化大小写 → [references/scripts.md](references/scripts.md)。
+写完 MATLAB 代码后可运行格式化脚本规范化大小写 → [references/scripts.md](references/scripts.md)。
 
 ## 任务完成同步
 
