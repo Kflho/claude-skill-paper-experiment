@@ -30,6 +30,8 @@ description: Scientific research workflow — experiment design, paper analysis,
 | **参考文献** | 论文解读 → 论文方法 | 论文内容、方法论、技术实现 |
 | **Schedule** | `# MM.DD` 日期标题 + 任务列表 | 今日任务、进度查询 |
 
+论文 PDF/markdown 原始文件存储在项目外部的独立目录中，路径记录在 CLAUDE.md → `## Scientific Research Paths` → `论文文件夹`。目录结构与读取流程见 [references/paper-reference.md](references/paper-reference.md)。
+
 **权限：**
 - ✅ 可修改：任务复选框、脚本/函数名、文件路径、代码块引用
 - ⚠️ 用户授权后：实验目标措辞、验收标准、公式数值、流程步骤

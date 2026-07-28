@@ -34,6 +34,7 @@
 > |---|--------|------|:---:|
 > | 1 | **Obsidian vault 路径** | vault 根目录 | ✅ 必需 |
 > | 2 | **项目名称** | 如 `Project 01`、`课题_xxx` | ✅ 必需 |
+> | 3 | **论文文件夹路径** | 存放论文 PDF/markdown 的外部目录 | ✅ 必需 |
 >
 > 你的三文件叫什么名字？（默认：`{项目名} Note.md`、`{项目名} 参考文献.md`、`{项目名} Schedule.md`）
 >
@@ -47,6 +48,7 @@
 > - Note: `{vault}/{项目名} Note.md`
 > - 参考文献: `{vault}/{项目名} 参考文献.md`
 > - Schedule: `{vault}/{项目名} Schedule.md`
+> - 论文文件夹: `<用户提供的路径>`
 >
 > 这些路径对吗？
 
@@ -56,6 +58,13 @@
 >
 > - **y** → 创建含默认 H1 的文件（Note=`# 目标`，参考文献=`# 论文解读`，Schedule=`# MM.DD`）
 > - **n** → 记录路径，标注 `(pending)`
+
+论文文件夹不存在时：
+
+> 论文文件夹 `<path>` 不存在。要我现在创建吗？（y/n）
+>
+> - **y** → `mkdir -p <path>`
+> - **n** → 记录路径，标注 `(pending)`。后续放入论文 PDF 后告诉 AI "读这篇论文" 即可。
 
 ---
 
@@ -204,10 +213,10 @@ addpath(genpath('../src/scripts/'));
 
 ## Step 5：论文目录检测
 
-检查项目仓库下 `参考文献/` 目录：
+检查用户在 Step 2 提供的论文文件夹路径：
 
 ```bash
-ls "<repo>/参考文献/" 2>/dev/null
+ls "<用户提供的论文文件夹路径>/" 2>/dev/null
 ```
 
 根据结果分支：
@@ -221,9 +230,9 @@ ls "<repo>/参考文献/" 2>/dev/null
 
 > 检测到 `<N>` 个 PDF 文件，尚未转换为 markdown。初始化完成后告诉 AI "读这篇论文" 即可自动调用 `pdf-converter` 转换。
 
-**情况 C：目录不存在** → 告知用户：
+**情况 C：目录为空** → 告知用户：
 
-> 未检测到 `参考文献/` 目录。当你放入论文 PDF 后，告诉 AI "读这篇论文"，会自动调用 `pdf-converter` 创建同名文件夹并转为 markdown。
+> 论文文件夹为空。当你放入论文 PDF 后，告诉 AI "读这篇论文"，会自动调用 `pdf-converter` 创建同名文件夹并转为 markdown。
 
 ---
 
@@ -269,6 +278,7 @@ test -d ~/.claude/skills/writing-great-skills && echo "installed" || echo "missi
 > - Note: <path>
 > - 参考文献: <path>
 > - Schedule: <path>
+> - 论文文件夹: <path>
 > - 仓库: <repo>
 > - Git: <已初始化/已是仓库/已跳过>
 > - 论文目录: <有/无>

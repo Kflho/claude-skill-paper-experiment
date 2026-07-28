@@ -7,6 +7,7 @@
 | Note | `<project_note_path>` |
 | 参考文献 | `<project_ref_path>` |
 | Schedule | `<project_schedule_path>` |
+| 论文文件夹 | `<papers_dir_path>` |
 
 ## 项目仓库
 
