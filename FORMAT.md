@@ -157,6 +157,12 @@ All AI output must follow these rules so the user can copy-paste directly into O
 | 品牌/产品名 | MATLAB, Simulink, Obsidian | 官方拼写 |
 | 希腊字母 | `Ω`, `ω`, `Δ`, `Σ` | Unicode 数学符号 |
 | MATLAB pragma | `%#ok<AGROW>` | 代码检查抑制指令 |
+| 外部 API 属性名 | `sim_w.Data`, `sim_v.Data`, `sim_w.Time` | 由外部 API 定义的属性名，大小写必须与 API 文档一致 |
+
+**外部 API 属性名识别规则**：当变量名引用外部对象（Simulink timeseries、MATLAB 对象、第三方库）的属性时，属性名的大小写由该对象的 API 决定，不得修改。常见场景：
+- `sim_w.Data` / `sim_v.Data` — Simulink `timeseries` 对象的属性，必须大写 `D`
+- `sim_w.Time` — 同上，必须大写 `T`
+- `obj.PropertyName` — 任何 `.` 访问的外部对象属性，格式化前先确认 API 文档
 
 其余一律小写：函数名、模块名、文件夹名、文档名、普通描述文本。
 
