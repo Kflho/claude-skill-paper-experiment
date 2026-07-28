@@ -95,6 +95,9 @@ PROTECTED_PATTERN = r'\b(?:' + '|'.join(re.escape(w) for w in _sorted_protected)
 
 def should_keep_case(name):
     """判断标识符是否应保留大写。"""
+    # 0. 占位符保护 — 不可被 to_snake 的 strip('_') 裁切
+    if name.startswith(PH):
+        return True
     # 1. 白名单
     if name in ALL_PROTECTED:
         return True

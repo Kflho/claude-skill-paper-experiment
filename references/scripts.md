@@ -35,3 +35,10 @@ python ~/.claude/skills/scientific-research/scripts/fix_m_code.py experiment_03.
 - PascalCase/CamelCase 变量自动拆分：`ToDoList` → `to_do_list`、`OmegaCount` → `omega_count`
 - 不修改字符串内容、LaTeX 数学、文件路径
 - 详细规则见 [FORMAT.md](../FORMAT.md) → Case conventions
+
+> ⚠️ **已知限制**：格式化器对上下文无感知，可能误改：
+> - 常量名被小写化导致变量遮蔽（`Omega = 2` → `omega = 2`，导致 `for omega = 1:Omega` 失效）
+> - 专有名词被误改（Hotelling's `T²` → `t²`）
+> - 外部接口字段名被改（Simulink 结构体字段 `sim_w.Data` → `sim_w.data`）
+>
+> **必须 AI 审查 diff 后再确认**。流程：`--apply` → `diff .bak .m` → AI 逐条判断 → 修正误改 → `rm .bak`。详见 [fan-out-writing.md](fan-out-writing.md) Phase 3b。

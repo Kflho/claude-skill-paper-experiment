@@ -82,7 +82,9 @@ Write ONLY the file [path]. Do NOT modify any existing files.
 
 **Agent 数**：N = 目标脚本数。若 N > 4，分批（每批 ≤4 个），避免 agent 间上下文干扰。
 
-## Phase 3: Review
+## Phase 3: Review & Format
+
+### 3a. 逻辑审查
 
 **做什么**：审查所有产出脚本的一致性和正确性。
 
@@ -109,7 +111,28 @@ Fix minor issues (typos, path errors) directly.
 Flag major issues (missing logic, wrong algorithm) for manual review.
 ```
 
-**Completion criterion**：审查报告产出，所有 minor issues 已修复，major issues 列表非空时逐一报告用户。
+**Completion criterion**：审查报告产出，所有 minor issues 已修复。
+
+### 3b. 格式化（AI 审查 diff）
+
+**做什么**：运行代码格式化工具，AI 审查前后 diff，纠正误改。
+
+**步骤**：
+1. `cp script.m script.m.bak` — 备份
+2. 运行格式化工具（如 `fix_m_code.py --apply`）
+3. `diff script.m.bak script.m` — 生成 diff
+4. **AI 审查 diff**，检查以下错误模式：
+   - 常量 → 变量遮蔽（如 `Omega = 2` 被改为 `omega = 2`，后续 `for omega = 1:Omega` 失效）
+   - 专有名词被误改（如 Hotelling's `T²` → `t²`，改变统计含义）
+   - 矩阵变量在注释中被小写化但代码中未同步，导致注释与代码不一致
+   - 外部接口字段名被改（如 `sim_w.Data` → `sim_w.data`，Simulink 结构体字段大小写敏感）
+5. AI 直接修复有问题的改动（Edit tool）
+6. `rm script.m.bak` — 清理备份
+7. 对每个脚本重复
+
+**为什么不用 AI 直接格式化**：格式化规则复杂（大小写、缩写、矩阵变量、人名），AI 容易漏改或过度改。规则引擎一次性覆盖所有模式，AI 只做 diff 级别的判断——精确且可审计。
+
+**Completion criterion**：所有脚本 diff 已审查，误改已纠正，.bak 已清理。
 
 ## Anti-patterns
 
