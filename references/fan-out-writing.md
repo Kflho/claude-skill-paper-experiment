@@ -121,12 +121,25 @@ Flag major issues (missing logic, wrong algorithm) for manual review.
 1. `cp script.m script.m.bak` — 备份
 2. 运行格式化工具（如 `fix_m_code.py --apply`）
 3. `diff script.m.bak script.m` — 生成 diff
-4. **AI 审查 diff**，检查以下错误模式：
-   - 常量 → 变量遮蔽（如 `Omega = 2` 被改为 `omega = 2`，后续 `for omega = 1:Omega` 失效）
-   - 专有名词被误改（如 Hotelling's `T²` → `t²`，改变统计含义）
-   - 矩阵变量在注释中被小写化但代码中未同步，导致注释与代码不一致
-   - 外部接口字段名被改（如 `sim_w.Data` → `sim_w.data`，Simulink 结构体字段大小写敏感）
-5. AI 直接修复有问题的改动（Edit tool）
+4. **AI 审查 diff**，逐条判断每条变更属于以下哪类：
+
+   **🔴 外部 API 边界 — 必须还原**
+   属性/字段访问的大小写由外部 API 决定，格式化器不知道上下文：
+   - `sim_w.Data` → `sim_w.data`（Simulink timeseries 属性名是 `Data`，大写 D）
+   - 任何 `identifier.Property` 或 `struct.field` 中的 Property/field → 还原
+
+   **🟡 命名冲突暴露 — 改变量名，不还原格式**
+   格式化器正确应用了 snake_case，但暴露了原代码中靠大小写区分的坏名字：
+   - `Omega = 2` + `for omega = 1:Omega` → 格式化后两者都是 `omega`，循环失效
+   - **不还原 `Omega`**，而是重命名变量：`Omega` → `n_omega`
+   - 判断标准：变量是不是矩阵？不是 → 该小写。冲突了 → 改名字，不改规则。
+
+   **🟢 注释中专有名词 — 保留原样**
+   统计/数学专有名词在注释中应保持约定俗成的写法：
+   - Hotelling's `T²` → 还原为 `T²`（非 `t²`）
+   - 但能用 LaTeX 就用 LaTeX：`$J_{T^2}$` 优于 `J_T²`
+
+5. AI 根据分类处理：🔴 用 Edit 还原，🟡 改变量名（可能涉及多个文件），🟢 还原专有名词
 6. `rm script.m.bak` — 清理备份
 7. 对每个脚本重复
 
@@ -140,3 +153,5 @@ Flag major issues (missing logic, wrong algorithm) for manual review.
 - **Prompt 太短**：只给任务描述不给 API 速查表和模板 → 每个 agent 各自搜索依赖 → 重复阅读、token 浪费、风格不一致。
 - **fan-out 有依赖的脚本**：脚本 B 需要脚本 A 的输出 → agent B 猜测 A 的输出格式 → 接口不匹配。有依赖就串行。
 - **一个 agent 写多个脚本**：agent 注意力分散，第二个脚本质量下降。一个 agent 一个脚本。
+- **跳过 Phase 3b diff 审查**：直接信任格式化器输出 → `sim_w.Data` 变 `sim_w.data` 运行时报错。规则引擎无上下文，必须 AI 过一遍 diff。
+- **还原格式化器的正确修改**：遇到 `Omega`→`omega` 冲突，不去改变量名而是保护 `Omega` → 变相鼓励不规范的命名。格式化器是对的，改变量名。

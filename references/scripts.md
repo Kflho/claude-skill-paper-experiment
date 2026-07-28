@@ -36,9 +36,9 @@ python ~/.claude/skills/scientific-research/scripts/fix_m_code.py experiment_03.
 - 不修改字符串内容、LaTeX 数学、文件路径
 - 详细规则见 [FORMAT.md](../FORMAT.md) → Case conventions
 
-> ⚠️ **已知限制**：格式化器对上下文无感知，可能误改：
-> - 常量名被小写化导致变量遮蔽（`Omega = 2` → `omega = 2`，导致 `for omega = 1:Omega` 失效）
-> - 专有名词被误改（Hotelling's `T²` → `t²`）
-> - 外部接口字段名被改（Simulink 结构体字段 `sim_w.Data` → `sim_w.data`）
+> ⚠️ **已知限制**：格式化器对上下文无感知，需 AI 审查 diff：
+> - **外部 API 边界**：`sim_w.Data` → `sim_w.data`（Simulink 属性名由 API 定义，格式化器不知道应保留大写）
+> - **命名冲突暴露**：`Omega=2` + `for omega=1:Omega` → 格式化后两者都是 `omega`，循环失效。此时应改变量名（`Omega`→`n_omega`），而非保护不规范的命名。格式化规则本身正确。
+> - **注释专有名词**：Hotelling's `T²` 被当普通文本小写化 → 应还原或用 `$J_{T^2}$` LaTeX 写法
 >
-> **必须 AI 审查 diff 后再确认**。流程：`--apply` → `diff .bak .m` → AI 逐条判断 → 修正误改 → `rm .bak`。详见 [fan-out-writing.md](fan-out-writing.md) Phase 3b。
+> **必须 AI 审查 diff 后再确认**。流程：`--apply` → `diff .bak .m` → AI 逐条判断（🔴外部API还原 / 🟡改变量名 / 🟢保留专有名词）→ 修正 → `rm .bak`。详见 [fan-out-writing.md](fan-out-writing.md) Phase 3b。
