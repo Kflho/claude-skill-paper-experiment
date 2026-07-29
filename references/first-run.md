@@ -211,6 +211,50 @@ addpath(genpath('../src/scripts/'));
 
 ---
 
+## Step 4.5：MATLAB 环境依赖检测
+
+> 此步骤确保后续写脚本时不会调用用户未安装的 toolbox 函数。
+
+在 MATLAB 中运行完整依赖检测：
+
+> ⚠️ **必须用 `exist('func', 'file')` 检测，不能用 `license('test',...)`**。`license` 只查许可证文件，不查 toolbox 是否实际安装。有许可证 ≠ 已安装。
+
+```matlab
+% 列出所有实际安装的 toolbox
+ver
+
+% 检测关键函数是否实际可用（0=未安装, 2=内置, 其他=文件路径）
+disp('--- Key Functions (0=NOT installed) ---');
+fprintf('chi2inv: %d\n', exist('chi2inv', 'file'));
+fprintf('chi2cdf: %d\n', exist('chi2cdf', 'file'));
+fprintf('dlyap: %d\n', exist('dlyap', 'file'));
+fprintf('lyap: %d\n', exist('lyap', 'file'));
+fprintf('dare: %d\n', exist('dare', 'file'));
+fprintf('ss: %d\n', exist('ss', 'file'));
+fprintf('lqr: %d\n', exist('lqr', 'file'));
+
+% 检测第三方工具
+disp('--- Third-party Tools ---');
+fprintf('YALMIP (sdpvar): %d\n', exist('sdpvar', 'file'));
+fprintf('MOSEK (mosekopt): %d\n', exist('mosekopt', 'file'));
+```
+
+根据检测结果，按三级分类处理：
+
+| 级别 | 缺失的 toolbox | 处理 |
+|---|---|---|
+| 🔴 刚需 | Control System Toolbox 等 | **阻断**：告知用户必须安装。不做 fallback |
+| 🟡 便利 | YALMIP, MOSEK | **建议安装**：说明安装后的收益，同时记录降级方案 |
+| 🟢 可选 | Statistics Toolbox (`chi2inv` 等) | **自动 fallback**：检测 `utils/` 中是否已有纯 MATLAB 实现 |
+
+将检测结果写入 CLAUDE.md 的 `## MATLAB 环境检测` 段。
+
+**如果 MATLAB 不可用**：告知用户手动运行 `ver` 并提供输出，或跳过此步骤（后续写脚本前再补检测）。
+
+> 详细检测流程和函数→Toolbox 映射表见 [dependency-check.md](dependency-check.md)。
+
+---
+
 ## Step 5：论文目录检测
 
 检查用户在 Step 2 提供的论文文件夹路径：
@@ -264,7 +308,7 @@ test -d ~/.claude/skills/writing-great-skills && echo "installed" || echo "missi
 
 **绝不硬编码任何用户路径到 skill 文件。所有路径只写入项目的 CLAUDE.md。**
 
-如果项目已有 CLAUDE.md → 只更新 `## Scientific Research Paths` 和 `## Git` 段，保留其他内容。无冲突时追加新段，不覆盖已有。
+如果项目已有 CLAUDE.md → 只更新 `## Scientific Research Paths`、`## MATLAB 环境检测` 和 `## Git` 段，保留其他内容。无冲突时追加新段，不覆盖已有。
 
 ---
 

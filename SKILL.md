@@ -37,6 +37,14 @@ description: Scientific research workflow — experiment design, paper analysis,
 - ⚠️ 用户授权后：实验目标措辞、验收标准、公式数值、流程步骤
 - ❌ 不可修改：论文解读内容
 
+**写前依赖检测铁律：**
+1. **写 MATLAB 脚本前必须检测环境依赖**：运行 `ver` + `license('test',...)` 确认 toolbox 可用性。详见 [references/dependency-check.md](references/dependency-check.md)。
+2. **依赖写入 CLAUDE.md**：检测结果记录到 `## MATLAB 环境检测` 段。
+3. **缺失分级处理，不静谧绕过**：
+   - 🔴 刚需 toolbox 缺失（如 Control System Toolbox）→ **阻断**，告知用户安装，不写绕过代码
+   - 🟡 便利 toolbox 缺失（如 YALMIP/MOSEK）→ **建议安装**，同时提供降级方案供用户选择
+   - 🟢 可选函数缺失（如 `chi2inv`）→ 自动使用 `utils/` 中的纯 MATLAB fallback
+
 **实验设计铁律：**
 1. **验收标准不得预设精度**：严禁在实验运行前写入具体数值精度。仅写"运行后报告实际精度"或"记录实际偏差与理论界对比"。
 2. **目标 = 验证什么，非怎么实现**：实验目标写高层验证目的，实现步骤写入流程。
@@ -54,10 +62,10 @@ description: Scientific research workflow — experiment design, paper analysis,
 | Paper analysis | 读论文, 解读文献, literature review | 参考文献 | `pdf-converter`, `research`, `grilling` | 解读论文，找研究缺口。[论文目录结构 →](references/paper-reference.md) |
 | Objective setting | 项目目标, 课题方向, research objective | Note | `grilling`, `writing-great-skills` | 基于论文提出研究目标 |
 | Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `research`, `prototype`, `dataviz` | 设计实验验证目标。每个实验的目标字段引用 Note 目标编号。实验通过后标记对应复选框 |
-| Methodology | 怎么实现, 技术细节, method | 参考文献 | `codebase-design`, `tdd` | 技术解答，归属到论文章节。[代码格式化脚本 →](references/scripts.md) |
+| Methodology | 怎么实现, 技术细节, method | 参考文献 | `codebase-design`, `tdd` | 技术解答，归属到论文章节。**写 MATLAB 代码前执行依赖检测** → [references/dependency-check.md](references/dependency-check.md)。[代码格式化脚本 →](references/scripts.md) |
 | Architecture mapping | 项目架构, 文件结构 | Note | — | 映射研究流程到文件夹结构。[项目结构规范 →](references/project-structure.md) |
-| Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读取 Schedule 最新日期下未完成任务，自动实现。**写→格式化→跑**，跑通后自动复盘操作问题（通用→skill，本项目→CLAUDE.md），执行[任务完成同步 →](references/task-completion-sync.md) |
-| Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
+| Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读取 Schedule 最新日期下未完成任务，自动实现。**依赖检测→写→格式化→跑**，跑通后自动复盘操作问题（通用→skill，本项目→CLAUDE.md），执行[任务完成同步 →](references/task-completion-sync.md) |
+| Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**依赖检测→写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
 
 ---
 

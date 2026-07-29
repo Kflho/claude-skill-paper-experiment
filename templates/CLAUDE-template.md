@@ -63,6 +63,24 @@ save([out_data 'results.mat'], ...);
 
 > **注意：** MATLAB 的 `addpath` 相对路径基于 `pwd`（当前工作目录），非脚本文件位置。务必从脚本所在目录运行（`cd` 到 `src/main/` / `src/tests/` / `src/scripts/` 后再执行），否则相对路径会解析错误。
 
+## MATLAB 环境检测
+
+> 由 scientific-research skill 自动检测。每次写 MATLAB 脚本前核对。
+> 检测日期：YYYY-MM-DD
+
+| Toolbox/工具 | 状态 | 级别 | 关键函数 | 缺失处理 |
+|---|---|---|---|---|
+| Control System Toolbox | ✅/❌ | 🔴 刚需 | `dlyap`, `lyap`, `ss`, `lqr`, `place` | 阻断，告知安装 |
+| Statistics Toolbox | ✅/❌ | 🟢 可选 | `chi2inv`, `chi2cdf` | `utils/chi2inv.m` fallback |
+| Optimization Toolbox | ✅/❌ | 🟢 可选 | `fmincon`, `lsqnonlin` | `fminsearch` 或手动实现 |
+| Signal Processing Toolbox | ✅/❌ | 🟢 可选 | `filter`, `fft` | 手动实现 |
+| System Identification Toolbox | ✅/❌ | 🟢 可选 | `ssest`, `n4sid` | 手动子空间辨识 |
+| Robust Control Toolbox | ✅/❌ | 🟡 便利 | `hinfsyn`, `h2syn` | 手动实现（不推荐） |
+| YALMIP (第三方) | ✅/❌ | 🟡 便利 | `sdpvar`, `optimize` | 建议安装，降级 DARE |
+| MOSEK (第三方) | ✅/❌ | 🟡 便利 | `mosekopt` | 建议安装，降级 SeDuMi |
+
+> **策略**：🔴 刚需缺失 → 阻断告知安装 | 🟡 便利缺失 → 建议安装+降级方案 | 🟢 可选缺失 → 自动 fallback
+
 ## Git
 
 ```bash

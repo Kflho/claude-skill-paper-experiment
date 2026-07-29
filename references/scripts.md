@@ -1,5 +1,27 @@
 # 代码格式化脚本
 
+## 写前检查：MATLAB 环境依赖
+
+**写 MATLAB 脚本前，必须确认所调用函数的 toolbox 依赖在用户环境中可用。**
+
+检测流程 → [dependency-check.md](dependency-check.md)
+
+快速检查：
+
+```bash
+# 用 exist() 检测函数是否实际安装（不用 license，它只查许可证不查安装）
+matlab -batch "ver; disp('---KEY FUNCS (0=NOT installed)---'); fns={'chi2inv','dlyap','ss','lqr','sdpvar','mosekopt'}; for i=1:length(fns), fprintf('%s: %d\n', fns{i}, exist(fns{i},'file')); end"
+```
+
+**分级处理：**
+- 🔴 刚需缺失（如 Control System Toolbox）→ 告知用户安装，**不写绕过代码**
+- 🟡 便利缺失（如 YALMIP）→ 建议安装，脚本内降级方案 + 注释标注
+- 🟢 可选缺失（如 `chi2inv`）→ 自动 `utils/` fallback
+
+> **铁律**：不确认依赖就写脚本 → 跑的时候才发现缺少 toolbox → 回滚重写。刚需和便利级缺失必须告知用户，不静谧绕过。
+
+---
+
 ## fmt.py — 中英文数字间距修复
 
 修复中文/英文与数字之间的空格问题：
@@ -41,4 +63,15 @@ python ~/.claude/skills/scientific-research/scripts/fix_m_code.py experiment_03.
 > - **命名冲突暴露**：`Omega=2` + `for omega=1:Omega` → 格式化后两者都是 `omega`，循环失效。此时应改变量名（`Omega`→`n_omega`），而非保护不规范的命名。格式化规则本身正确。
 > - **注释专有名词**：Hotelling's `T²` 被当普通文本小写化 → 应还原或用 `$J_{T^2}$` LaTeX 写法
 >
-> **工作流：写 → 格式化 → diff → AI 逐条判断（🔴外部API还原 / 🟡改变量名 / 🟢保留专有名词）→ 修正 → 跑。** 格式化必须在跑之前完成。详见 [fan-out-writing.md](fan-out-writing.md) Phase 2。
+> **🚨 强制工作流（格式化必须在跑之前完成）：**
+> ```
+> 1. 写 .m 代码
+> 2. python ~/.claude/skills/scientific-research/scripts/fix_m_code.py <file> --apply
+> 3. git diff <file>  →  AI 逐条审查：
+>    🔴 外部 API 属性名还原大写（如 sim_w.Data、sim_w.Time）
+>    🟡 变量名变更是否导致命名冲突（Omega→n_omega 等）
+>    🟢 注释中 LaTeX $...$ 和专有名词是否被误改
+> 4. 修正格式化引入的错误
+> 5. 跑 MATLAB 脚本
+> ```
+> 严禁跳过格式化直接跑——格式化器改坏的 API 属性名会导致运行时错误。详见 [fan-out-writing.md](fan-out-writing.md) Phase 2。
