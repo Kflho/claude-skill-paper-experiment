@@ -7,7 +7,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 | Level | Markdown | Use |
 |---|---|---|
 | H1 | `# Title` | File top-level sections: 目标, 流程, 架构, 论文解读, 论文方法 |
-| H2 | `## Title` | Major phases or categories: 前期准备, 实验, Script, Function, 仿真搭建 |
+| H2 | `## Title` | Major phases or categories: 流程, 架构, Scripts, Lib, Tests, 指标一/二/三 |
 | H3 | `### Title` | Sub-entries: paper section titles, specific module names |
 | Separator | `---` | Major block breaks within a section; on its own line with blank lines above and below |
 
@@ -42,7 +42,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 
 ## Labels and content
 
-**Short labels** (目标, 流程, 参考, 架构, 总结, 问题, 验收标准): label followed by one space, then content on the **same line**:
+**Short labels** (目标, 流程, 架构, 总结, 验收标准): label followed by one space, then content on the **same line**:
 
 ```
 目标  证明每个计算中心仅使用本地数据即可独立计算残差
@@ -108,19 +108,107 @@ All AI output must follow these rules so the user can copy-paste directly into O
 - **LaTeX 参数名**：报告中所有数学变量名必须用 LaTeX 数学模式（`$T_{sim}$`、`$r^y$`、`$A_z$`），禁止使用代码风格下划线（`T_sim`、`r_y`）。文件名/函数名仍用 `` `backtick` `` 包裹（`` `split_matrices_and_cov` ``）。
 - **科学计数法**：极小/极大数值用 LaTeX 乘法（`$1.23 \times 10^{-15}$`），不用 `1.23e-15`
 
-## Schedule file format
+## Note file structure
 
-- Date header: `# MM.DD`
-- All entries are task lists
-- Nesting follows the same Tab rules as Note
+Note 文件固定四个 H1 段：
 
 ```
-# 07.17
-- [x] 未知输入模型与递归滤波器
-	- [x] 函数 model_2_to_model_3_qr.m
-		- [x] 组装公式 35-36 的动态耦合映射矩阵
-	- [x] 函数 recursive_joint_filter.m
-		- [x] 偏置创新向量 → 未知输入估计
+# 目标          ← 研究目标与指标（复选框，编号 目标X.Y）
+# 流程          ← 实验清单：每个实验一行（脚本、目标引用、结论一句话）→ 实验报告
+# 架构          ← 函数目录：scripts → lib（按调用链分阶段）→ tests → main
+# 总结          ← 实验报告详细数据（→ "Experiment report format"）
+```
+
+### 流程段格式
+
+按指标分组，每个实验 3 行：脚本、目标、结论。
+
+```
+# 流程
+
+## 指标一 — 分布式残差生成
+- [x] 实验 01 — 去中心化验证
+  - 脚本：`experiment_01_decentralized_residual.m`
+  - 目标：目标 1.1 — 各中心仅用本地数据独立计算残差
+  - 结论：通过。局域 vs 全局残差偏差 $\sim 10^{-15}$。（→ 实验报告）
+```
+
+规则：
+- H2 按指标分组（`## 指标一 — ...`、`## 指标二 — ...`、`## 指标三 — ...`）
+- 辅助脚本（show_liquid_level、batch_experiments）放 `## 辅助`
+- 结论一行写完，指向实验报告获取详细数据
+
+### 架构段格式
+
+四个 H2 子段：`## scripts`、`## lib`、`## tests`、`## main`。核心要求：**每项标注上下游依赖，读文档即可落地。**
+
+**scripts** — 参数/仿真脚本：
+```
+- [x] `create_model_1.m`
+  - 功能：定义四容水箱 model 1 的状态空间矩阵与网络拓扑
+  - 输出：A, B, C, D, E, F, C_s, D_s, M, N, n_x, n_y, n_s, Sigma_w, Sigma_v
+  - 下游：所有实验脚本的第一步调用
+```
+
+**lib** — 核心算法，按论文推导链分阶段：
+```
+### 阶段 1：模型等价转换（公式 7-14）
+- [x] `model_1_to_model_2.m`
+  - 功能：model 1 → model 2 转换，公式 7-10
+  - 输入：create_model_1 的 A, B, C, D, E, F, C_s, D_s, M, N
+  - 输出：A_bar, B_bar, C_bar, D_bar, E_bar, F_bar, C_s_bar, D_s_bar
+  - 下游：→ assemble_global_model, model_2_to_model_3_qr
+```
+
+规则：
+- 每项必有：功能 + 输入 + 输出 + 下游（用 `→` 箭头指向调用方）
+- 输入/输出写具体变量名，不写"各子系统矩阵"等模糊描述
+- 外部依赖（YALMIP、dlyap）标注在 `依赖：` 行
+- 公式引用用 `公式 X-Y` 或 `Theorem 1`
+
+**tests** — 单元测试：
+```
+- [x] `test_01_model_1_to_model_2` — model_1_to_model_2：与 create_controlled_system 逐元素比对（偏差 $< 10^{-12}$）
+```
+一行一个测试，破折号后写被测函数和验证方式。
+
+**main** — 在线实验。先写共用数据管线，再逐个列出实验：
+
+```
+### 共用数据管线
+**A. 离线设计**（→ `## lib` 阶段 1-2）：
+1. `create_model_1` → 子系统矩阵 `A, B, C, D, ...`
+2. `model_1_to_model_2(A, B, C, D, E, F, C_s, D_s, M, N)` → `A_bar, B_bar, C_bar, D_bar`
+...
+
+- [x] `experiment_01_decentralized_residual` — 目标 1.1
+  - 做什么：调用管线 A+B+C。先对所有中心一起算残差，再逐个中心单独算，对比偏差。
+  - 数据流：`create_model_1 → model_1_to_model_2 → ... → compute_online_residuals`
+  - 产出：局域 vs 全局残差最大偏差 $\sim 10^{-15}$。
+```
+
+规则：
+- 共用管线用编号步骤 + `函数名(参数) → 产出变量` 格式，标注阶段对应 lib 位置
+- 每个实验：做什么（一句话）+ 数据流（完整调用链）+ 产出（关键数值）
+- 数据流要具体到函数名和变量名，不写"离线链路 + → xxx"
+
+## Schedule file format
+
+日程表只记录**做什么、完成没有**。实施方案（函数、调用链、参数）全部在 Note `# 架构`。
+
+- Date header: `# MM.DD`
+- 每项一个任务复选框，标注实验编号 + 目标引用
+- 不展开实现细节（函数名、公式、参数）——这些属于 Note
+
+```
+# 07.28
+- [x] 实验 03 — T² 检测与零误报（目标 2.1）
+- [x] 实验 04 — 可检测性边界（目标 2.2）
+- [x] 实验 05 — 粗定位（目标 3.1）。结论：论文方法在此拓扑无法实施。
+
+# 07.29
+- [x] 实验 06 — 修正脚本逻辑，精定位与粗定位分离，重跑通过（100%）
+- [x] 合并 Note 前期准备/实验/架构，消除冗余
 ```
 
 ## Content spacing rules

@@ -93,19 +93,24 @@ git add -A && git commit -m "备份：<操作>前 — $(date +%Y-%m-%d)"
 
 ## 任务进度
 
-### 前期准备
-- [ ] 1. 子系统建模与参数配置
-- [ ] 2. 模型等价转换
-- [ ] 3. 分布式残差生成器离线设计
-- [ ] 4. 未知输入模型与递归滤波器
-- [ ] 5. 仿真数据生成与在线监测
+### scripts — 参数与仿真脚本
+- [ ] `create_model_1.m`
+- [ ] `init_parameters.m`
+- [ ] `start_simulation.m`
 
-### 实验
-- [ ] Experiment_01_decentralized_residual.m
-- [ ] Experiment_02_zero_mean_residual.m
-- [ ] Experiment_03_T2_detection.m
-- [ ] Experiment_04_detectability_bound.m
-- [ ] Experiment_05_coarse_localization.m
-- [ ] Experiment_06_fine_localization.m
+### lib — 核心算法
+- [ ] 1. 模型等价转换（model_1_to_model_2, assemble_global_model）
+- [ ] 2. 分布式残差生成器离线设计（solve_luenberger_lmi, split_matrices_and_cov）
+- [ ] 3. 未知输入模型（model_2_to_model_3_qr）
+- [ ] 4. 在线计算（compute_online_residuals, inject_fault, recursive_joint_filter）
+
+### tests — 验证
+- [ ] 单元测试（test_01 ~ test_09）
+- [ ] 实验 01 — 去中心化验证（目标 1.1）
+- [ ] 实验 02 — 零均值验证（目标 1.2）
+- [ ] 实验 03 — T² 检测（目标 2.1）
+- [ ] 实验 04 — 可检测性边界（目标 2.2）
+- [ ] 实验 05 — 粗定位（目标 3.1）
+- [ ] 实验 06 — 精定位（目标 3.2）
 
 ## SKILL INITIALIZED: true
