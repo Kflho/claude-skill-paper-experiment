@@ -113,4 +113,8 @@ git add -A && git commit -m "备份：<操作>前 — $(date +%Y-%m-%d)"
 - [ ] 实验 05 — 粗定位（目标 3.1）
 - [ ] 实验 06 — 精定位（目标 3.2）
 
+## Handoff
+
+`/clear` 后自动读取系统临时目录下的 `handoff-*.md`（按修改时间取最新），恢复上下文继续工作。
+
 ## SKILL INITIALIZED: true

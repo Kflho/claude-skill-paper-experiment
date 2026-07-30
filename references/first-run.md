@@ -312,7 +312,13 @@ test -d ~/.claude/skills/writing-great-skills && echo "installed" || echo "missi
 
 **绝不硬编码任何用户路径到 skill 文件。所有路径只写入项目的 CLAUDE.md。**
 
-如果项目已有 CLAUDE.md → 只更新 `## Scientific Research Paths`、`## MATLAB 环境检测` 和 `## Git` 段，保留其他内容。无冲突时追加新段，不覆盖已有。
+如果项目已有 CLAUDE.md → 只更新 `## Scientific Research Paths`、`## MATLAB 环境检测`、`## Git` 和 `## Handoff` 段，保留其他内容。无冲突时追加新段，不覆盖已有。
+
+### 7.1 Handoff 机制
+
+模板已包含 `## Handoff` 段。Handoff 文件写入系统临时目录（跨平台：Windows `%TEMP%`，Unix `$TMPDIR` 或 `/tmp`），文件名格式 `handoff-<project>-<topic>.md`。`/clear` 时 AI 按修改时间取最新文件恢复上下文。
+
+Handoff 段路径引用系统环境变量，不包含任何用户特定路径，开源安全。
 
 ---
 
