@@ -106,8 +106,8 @@ All AI output must follow these rules so the user can copy-paste directly into O
 	- 计算中心划分 = $\{[1,3], [2,4]\}$
 	- $A_z$ max$|\lambda| = 0.962$
 - 指标  
-	- 中心 1 $r^y$ 最大偏差 = $1.23 \times 10^{-15}$  [通过]
-	- 中心 2 $r^y$ 最大偏差 = $3.67 \times 10^{-15}$  [通过]
+	- 中心 1 $r_1$ 最大偏差 = $1.23 \times 10^{-15}$  [通过]
+	- 中心 2 $r_2$ 最大偏差 = $3.67 \times 10^{-15}$  [通过]
 - 备注  
 	- 发现/问题/注意事项
 ```
@@ -119,7 +119,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 - 指标项每条独立一行，括号内标注通过/未通过
 - 实验重新运行后更新对应 H3 块，不重复追加
 - **产出路径**：若实验生成图片/数据，在备注中注明 `outputs/{cn,eng}/experiment_XX_xxx/` 下的产出路径
-- **LaTeX 参数名**：报告中所有数学变量名必须用 LaTeX 数学模式（`$T_{sim}$`、`$r^y$`、`$A_z$`），禁止使用代码风格下划线（`T_sim`、`r_y`）。文件名/函数名仍用 `` `backtick` `` 包裹（`` `split_matrices_and_cov` ``）。
+- **LaTeX 参数名**：报告中所有数学变量名必须用 LaTeX 数学模式（`$T_{sim}$`、`$r_\omega$`、`$A_z$`），禁止使用代码风格下划线（`T_sim`、`r_omega`）。文件名/函数名仍用 `` `backtick` `` 包裹（`` `split_matrices_and_cov` ``）。
 - **科学计数法**：极小/极大数值用 LaTeX 乘法（`$1.23 \times 10^{-15}$`），不用 `1.23e-15`
 
 ## Note file structure
@@ -162,11 +162,11 @@ Note 文件固定四个 H1 段：
     - 步骤 1（离线设计）：执行管线 A（model 1 → 2 → 组装 → LMI → 拆分），公式 7-26
     - 步骤 2（闭环仿真）：管线 B，LQR 控制器 + 噪声驱动，$T_{sim}=500$，无故障
     - ...
-    - 判定准则：$\forall \omega$: max$|r_{y,loc}^\omega - r_{y,all}^\omega| < 10^{-12}$
+    - 判定准则：$\forall \omega$: max$|r_\omega^{loc} - r_\omega^{all}| < 10^{-12}$
   - 产出：
-    - 局域 vs 全局输出残差最大偏差 $\sim 10^{-15}$，验证分布式计算无精度损失（仅验证 $r_y$，$r_s$ 不参与检测）
+    - 局域 vs 全局输出残差最大偏差 $\sim 10^{-15}$，验证分布式计算无精度损失（仅验证输出残差 $r_\omega$）
     - 图片：
-      - `center{1,2}_ry_comparison.png` — 论证局域与全局输出残差一致。标题：`实验 01：中心 ω 输出残差 — 局域 vs 全局`
+      - `center{1,2}_ry_comparison.png` — 论证局域与全局输出残差一致。标题：`中心 ω 输出残差：局域 vs 全局`
     - 数据：
       - `results.mat` — `max_err_y`, `indices_omega`, `n_omega`, `T_sim`
 ```
