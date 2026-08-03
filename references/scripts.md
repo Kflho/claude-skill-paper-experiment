@@ -12,13 +12,13 @@
 
 ```bash
 # 预览修改（dry-run）
-python ~/.claude/skills/scientific-research/scripts/fmt.py <文件或目录>
+python ~/.claude/skills/paper-experiment/scripts/fmt.py <文件或目录>
 
 # 执行修改（自动 .bak 备份）
-python ~/.claude/skills/scientific-research/scripts/fmt.py <文件或目录> --apply
+python ~/.claude/skills/paper-experiment/scripts/fmt.py <文件或目录> --apply
 ```
 
-规则：中文↔数字去空格 | 英文↔数字加空格 | 自动保护代码块、LaTeX、URL、下划线标识符。详细规则见 [FORMAT.md](../FORMAT.md)。
+规则：中文↔数字去空格 | 英文↔数字加空格 | 自动保护代码块、LaTeX、URL、下划线标识符。详细规则见 [format.md](format.md)。
 
 ## fix_m_code.py — MATLAB 代码大小写规范化
 
@@ -26,13 +26,13 @@ python ~/.claude/skills/scientific-research/scripts/fmt.py <文件或目录> --a
 
 ```bash
 # 预览修改（dry-run）
-python ~/.claude/skills/scientific-research/scripts/fix_m_code.py <文件或目录>
+python ~/.claude/skills/paper-experiment/scripts/fix_m_code.py <文件或目录>
 
 # 执行修改（自动 .bak 备份）
-python ~/.claude/skills/scientific-research/scripts/fix_m_code.py <文件或目录> --apply
+python ~/.claude/skills/paper-experiment/scripts/fix_m_code.py <文件或目录> --apply
 
 # 单文件修改
-python ~/.claude/skills/scientific-research/scripts/fix_m_code.py experiment_03.m --apply
+python ~/.claude/skills/paper-experiment/scripts/fix_m_code.py experiment_03.m --apply
 ```
 
 规则：
@@ -40,7 +40,7 @@ python ~/.claude/skills/scientific-research/scripts/fix_m_code.py experiment_03.
 - **转为小写**：函数名、标量变量、模块名、注释文本（保护 LaTeX `$...$` 和专有名词）
 - PascalCase/CamelCase 变量自动拆分：`ToDoList` → `to_do_list`、`OmegaCount` → `omega_count`
 - 不修改字符串内容、LaTeX 数学、文件路径
-- 详细规则见 [FORMAT.md](../FORMAT.md) → Case conventions
+- 详细规则见 [format.md](format.md) → Case conventions
 
 > ⚠️ **已知限制**：格式化器对上下文无感知，需 AI 审查 diff：
 > - **外部 API 边界**：`sim_w.Data` → `sim_w.data`（Simulink 属性名由 API 定义，格式化器不知道应保留大写）
@@ -50,7 +50,7 @@ python ~/.claude/skills/scientific-research/scripts/fix_m_code.py experiment_03.
 > **🚨 强制工作流（格式化必须在跑之前完成）：**
 > ```
 > 1. 写 .m 代码
-> 2. python ~/.claude/skills/scientific-research/scripts/fix_m_code.py <file> --apply
+> 2. python ~/.claude/skills/paper-experiment/scripts/fix_m_code.py <file> --apply
 > 3. git diff <file>  →  AI 逐条审查：
 >    🔴 外部 API 属性名还原大写（如 sim_w.Data、sim_w.Time）
 >    🟡 变量名变更是否导致命名冲突（Omega→n_omega 等）

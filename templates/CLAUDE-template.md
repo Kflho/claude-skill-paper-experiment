@@ -65,7 +65,7 @@ save([out_data 'results.mat'], ...);
 
 ## MATLAB 环境检测
 
-> 由 scientific-research skill 自动检测。每次写 MATLAB 脚本前核对。
+> 由 paper-experiment skill 自动检测。每次写 MATLAB 脚本前核对。
 > 检测日期：YYYY-MM-DD
 
 | Toolbox/工具 | 状态 | 级别 | 关键函数 | 缺失处理 |

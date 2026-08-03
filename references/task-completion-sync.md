@@ -56,7 +56,7 @@
 
 | 问题类型 | 写入位置 | 示例 |
 |---------|---------|------|
-| 通用（任何项目都可能遇到） | skill 对应文件 | Simulink `sim_w.Data` 属性名例外 → `FORMAT.md` Case conventions |
+| 通用（任何项目都可能遇到） | skill 对应文件 | Simulink `sim_w.Data` 属性名例外 → `format.md` Case conventions |
 | 本项目特定 | 项目 `CLAUDE.md` → `## 运行须知` | 本项目的 toolbox 依赖、特殊启动步骤 |
 
 写入原则：

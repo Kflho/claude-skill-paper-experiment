@@ -23,7 +23,7 @@ projects/                        # 所有项目（固定层，防止摊平）
             data/                # 数据（MAT, CSV）
 ```
 
-**命名与格式规范详见 [FORMAT.md](../FORMAT.md)**：
+**命名与格式规范详见 [format.md](format.md)**：
 - File naming：snake_case、禁止数字开头、编号前缀、`.m` 文件名 = 主函数名
 - Folder naming：snake_case、能加复数加复数、禁止数字开头、不重复命名
 - Case conventions：矩阵/人名/缩写/品牌/希腊字母保留大写，其余全小写

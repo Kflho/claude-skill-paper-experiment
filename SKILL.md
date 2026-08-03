@@ -24,7 +24,7 @@ description: Paper experiment pipeline — design simulation experiments from pa
 
 | Role | Sections | When to read |
 |---|---|---|
-| **Note** | 目标 → 流程 → 结论。完整结构见 [FORMAT.md → Note file structure](FORMAT.md#note-file-structure) | 项目目标、实验计划、结论汇总 |
+| **Note** | 目标 → 流程 → 结论。完整结构见 [references/format.md → Note file structure](references/format.md#note-file-structure) | 项目目标、实验计划、结论汇总 |
 | **src** | scripts → lib（按阶段）→ tests → main（数据管线 + 设计决策 + 各实验数据流/参数溯源） | 代码架构、函数调用链、参数来源、数据流细节 |
 | **report** | 每个实验一个 H3 块（日期、结论、参数、指标、备注） | 实验详细数据、指标数值 |
 | **参考文献** | 论文解读 → 论文方法 | 论文内容、方法论、技术实现 |
@@ -159,7 +159,7 @@ description: Paper experiment pipeline — design simulation experiments from pa
 
 ## Output format
 
-所有输出遵循 Obsidian 格式规范 → [FORMAT.md](FORMAT.md)。
+所有输出遵循 Obsidian 格式规范 → [references/format.md](references/format.md)。
 
 写完 MATLAB 代码后可运行格式化脚本规范化大小写 → [references/scripts.md](references/scripts.md)。
 

@@ -100,7 +100,7 @@ Write a complete [language] script `[relative/path/to/script.ext]` for the proje
 [具体实现步骤，1 步 1 条，来自 Schedule 流程描述]
 - 使用与参考模板相同的 coding style（注释密度、section 分隔、fprintf 详细程度）
 - 脚本需 production-ready，不是 stub
-- **外部 API 属性名**：Simulink timeseries 等外部对象的属性名必须保持官方大小写（如 `sim_w.Data` 非 `sim_w.data`）。所有 `.` 右侧的属性名，若来自外部 API 而非自定义结构体，不得 smallcaps 化。详见 FORMAT.md → Case conventions → 外部 API 属性名。
+- **外部 API 属性名**：Simulink timeseries 等外部对象的属性名必须保持官方大小写（如 `sim_w.Data` 非 `sim_w.data`）。所有 `.` 右侧的属性名，若来自外部 API 而非自定义结构体，不得 smallcaps 化。详见 format.md → Case conventions → 外部 API 属性名。
 - **Toolbox 约束**（根据 Phase 1 检测结果）：
   - 🔴 刚需 toolbox 缺失 → 脚本开头插入 `error('请安装 XXX Toolbox: <说明与安装指引>')`，**不写绕过代码**。告知用户阻断原因。
   - 🟡 便利 toolbox 缺失 → 优先写降级方案（如 DARE 回退），注释中标注 `% TODO: 安装 XXX 后可用更优方案`。告知用户安装建议和降级代价。
