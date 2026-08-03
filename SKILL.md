@@ -71,6 +71,7 @@ description: Paper experiment pipeline — design simulation experiments from pa
 2. **可视化统一入口**：所有实验脚本调用 `run_visualization(figh)` 应用论文统一格式，不在实验脚本内逐张手动设置字体/线宽/轴样式。`run_visualization` 已支持多 subplot 图窗——对图窗内所有数据坐标轴（排除图例内部轴）逐一应用格式，脚本中无需为每个 subplot 单独调用。
 3. **格式修改走 skill 审查**：如需调整全局可视化样式，修改 `utils/visualizations/` 下的对应模块，经 `code-review` 审查后应用到所有脚本。
 4. **中英双语输出**：实验产出同时生成中文与英文两版。输出目录先按语言分 `outputs/cn/` 与 `outputs/eng/` 两个一级文件夹，再在各语言文件夹下按实验分子文件夹 `experiment_XX_descriptor/{figures,data}/`。脚本在绘图段用语言标签结构体集中定义中英文标注（title/legend/xlabel/ylabel/sgtitle），按语言循环绘图、分别保存。论文图片引用遵循「中文论文 → 中文图片（`results/cn/`），英文论文 → 英文图片（`results/eng/`）」；语言无关图（拓扑/原理示意图）放 `results/` 根目录共用。
+5. **标题严格单行且不超出图片**：图标题禁止带实验编号（"实验 01"、"Exp. 01"）等无关前缀，措辞精简、传达验证目标即可。**标题禁止换行**（多行标题会纵向溢出图外）。单栏图标题有效宽度 ≤48（CJK 全宽字计 2、ASCII 计 1，即约 ≤24 个中文字或 ≤48 个英文字母）；`run_visualization` 检测到超宽标题时**只告警不换行**，在运行日志打印 `[run_visualization] 标题超宽(...)，需精简措辞: <标题>`。**每次跑完必须读取运行日志中的该告警**：对每条被告警的标题，AI 精简措辞（删冗余修饰、去可由上下文推导的信息；数值型标注如均值/σ 放入图例而非标题）后重跑对应实验，直至无告警。
 
 **参数溯源铁律：**
 1. **每个数值标注来源**：论文未给出的所有数值必须解释怎么来的。来源只能是以下三类之一：
