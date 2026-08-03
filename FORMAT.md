@@ -2,6 +2,21 @@
 
 All AI output must follow these rules so the user can copy-paste directly into Obsidian without editing.
 
+## 快速参考
+
+> 最常用的 5 条规则。完整规范见下方各节。
+
+| 场景 | 规则 |
+|---|---|
+| 实验报告结构 | `### experiment_XX_xxx` → 日期 / 结论 / 参数 / 指标 / 备注（参数名 LaTeX 化） |
+| 参数与变量 | LaTeX 数学模式：`$T_{sim}$` 非 `T_sim`；极小值 `$1.23 \times 10^{-15}$` 非 `1.23e-15` |
+| 文件名 | 全小写 snake_case：`experiment_01_xxx.m`，禁止数字开头 |
+| Case | 矩阵大写（`A`, `B_z`, `Sigma_w`），缩写大写（`LMI`, `DARE`），其余小写。外部 API 属性保留官方大小写 |
+| Note 流程段 | 每个实验必含 3 字段：目标（引用 Note 编号）、方法（引用论文公式）、产出（数值 + 图片 + 数据） |
+| 函数所有权 | `[手写]` = 用户实现核心算法，`[AI组装]` = AI 拼装脚本。src 中每个函数条目标注 |
+
+---
+
 ## Heading hierarchy
 
 | Level | Markdown | Use |
@@ -92,7 +107,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 	- $A_z$ max$|\lambda| = 0.962$
 - 指标  
 	- 中心 1 $r^y$ 最大偏差 = $1.23 \times 10^{-15}$  [通过]
-	- 中心 2 $r^s$ 维度 2 样本均值/界 = 0.42  [通过]
+	- 中心 2 $r^y$ 最大偏差 = $3.67 \times 10^{-15}$  [通过]
 - 备注  
 	- 发现/问题/注意事项
 ```
@@ -103,7 +118,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 - 短标签（日期、结论）同行；多行内容（参数、指标、备注）标签独占一行，内容下一行 Tab 缩进
 - 指标项每条独立一行，括号内标注通过/未通过
 - 实验重新运行后更新对应 H3 块，不重复追加
-- **产出路径**：若实验生成图片/数据，在备注中注明 `outputs/experiment_XX_xxx/` 下的产出路径
+- **产出路径**：若实验生成图片/数据，在备注中注明 `outputs/{cn,eng}/experiment_XX_xxx/` 下的产出路径
 - **LaTeX 参数名**：报告中所有数学变量名必须用 LaTeX 数学模式（`$T_{sim}$`、`$r^y$`、`$A_z$`），禁止使用代码风格下划线（`T_sim`、`r_y`）。文件名/函数名仍用 `` `backtick` `` 包裹（`` `split_matrices_and_cov` ``）。
 - **科学计数法**：极小/极大数值用 LaTeX 乘法（`$1.23 \times 10^{-15}$`），不用 `1.23e-15`
 
@@ -115,7 +130,12 @@ Note 文件固定四个 H1 段：
 # 目标          ← 研究目标与指标（复选框，编号 目标X.Y）
 # 流程          ← 实验清单：每个实验仅含目标、方法、产出。数据流/参数溯源 → src.md，结论 → 结论
 # 结论          ← 各实验结论汇总（按指标分组，每个实验一句话结论）
-# 问题          ← 方法不一致/参数臆造等未解决问题
+```
+
+**Schedule 文件结构**（**内容由用户维护；AI 只允许勾选/取消已有复选框，禁止新增/编辑任何文字**）：
+```
+# MM.DD        ← 日期标题 + 当日任务列表（用户记录：只记录做了什么，不写怎么做）
+# 问题          ← 方法不一致/参数臆造等未解决问题（从 Note 移出，统一跟踪）
 ```
 
 **示例**：
@@ -142,13 +162,13 @@ Note 文件固定四个 H1 段：
     - 步骤 1（离线设计）：执行管线 A（model 1 → 2 → 组装 → LMI → 拆分），公式 7-26
     - 步骤 2（闭环仿真）：管线 B，LQR 控制器 + 噪声驱动，$T_{sim}=500$，无故障
     - ...
-    - 判定准则：$\forall \omega$: max$|r_{loc}^\omega - r_{all}^\omega| < 10^{-12}$
+    - 判定准则：$\forall \omega$: max$|r_{y,loc}^\omega - r_{y,all}^\omega| < 10^{-12}$
   - 产出：
-    - 局域 vs 全局残差最大偏差 $\sim 10^{-15}$，验证分布式计算无精度损失
+    - 局域 vs 全局输出残差最大偏差 $\sim 10^{-15}$，验证分布式计算无精度损失（仅验证 $r_y$，$r_s$ 不参与检测）
     - 图片：
-      - `center{1,2}_ry_comparison.png` — $r_y$ 局域 vs 全局对比，论证两者重合
+      - `center{1,2}_ry_comparison.png` — 论证局域与全局输出残差一致。标题：`实验 01：中心 ω 输出残差 — 局域 vs 全局`
     - 数据：
-      - `results.mat` — `max_err_y`, `max_err_s`, ...
+      - `results.mat` — `max_err_y`, `indices_omega`, `n_omega`, `T_sim`
 ```
 
 **3 字段要求：**
@@ -157,7 +177,7 @@ Note 文件固定四个 H1 段：
 |------|------|
 | 目标 | 格式 `目标 ：验证目标X.Y，<目标原文>`，显式引用 Note `# 目标` 编号 |
 | 方法 | 每个步骤引用论文公式/定理/表。论文未明确描述时标注「论文未指定，实现选择：<理由>」。判定准则作为方法最后一步 |
-| 产出 | 关键数值结果 + 图片（文件名、展示内容、科学含义）+ 数据（`.mat` 文件名、包含变量、用途） |
+| 产出 | 关键数值结果 + 图片（文件名、论证目的、标题模板）+ 数据（`.mat` 文件名、包含变量、用途） |
 
 **技术细节透明规则**：论文没有、但实现必须的技术决策，格式固定为「论文未指定，实现选择：<做法>。理由：<原因>。」简化/替代实现必须说明论文原文做法、本实现做法、为何可/不可等价、差异对结论的影响。详细数据流与参数溯源 → src.md。
 
@@ -182,10 +202,10 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
   - 下游：所有实验脚本的第一步调用
 ```
 
-**lib** — 核心算法，按论文推导链分阶段：
+**lib** — 核心算法，按论文推导链分阶段。每个函数标注所有权：`[手写]`（用户实现）或 `[AI组装]`（AI 拼装）：
 ```
 ### 阶段 1：模型等价转换（公式 7-14）
-- [x] `model_1_to_model_2.m`
+- [x] `model_1_to_model_2.m` `[AI组装]`
   - 功能：model 1 → model 2 转换，公式 7-10
   - 输入：create_model_1 的 A, B, C, D, E, F, C_s, D_s, M, N
   - 输出：A_bar, B_bar, C_bar, D_bar, E_bar, F_bar, C_s_bar, D_s_bar
@@ -257,7 +277,7 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 
 ## Schedule file format
 
-日程表只记录**做什么、完成没有**。实施方案（函数、调用链、参数）全部在 src。
+日程表只记录**做什么、完成没有**，**内容由用户维护**。实施方案（函数、调用链、参数）全部在 src。**AI 只允许勾选/取消已有复选框，禁止新增/编辑任何文字。**
 
 - Date header: `# MM.DD`
 - 每项一个任务复选框，标注实验编号 + 目标引用
@@ -331,7 +351,7 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 
 | 规则 | 示例 |
 |---|---|
-| 全小写 snake_case，下划线分隔 | `src/lib/`, `src/scripts/`, `outputs/experiment_01/` |
+| 全小写 snake_case，下划线分隔 | `src/lib/`, `src/scripts/`, `outputs/cn/experiment_01/` |
 | 能加复数加复数 | `projects/`, `scripts/`, `tests/`, `outputs/`, `utils/` |
 | 不可数/不适合复数保持单数 | `lib/`, `main/`, `data/`, `src/` |
 | 禁止数字开头 | ❌ `01_project/` → ✅ `project_01_distributed_fault_monitoring/` |

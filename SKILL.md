@@ -1,6 +1,6 @@
 ---
-name: scientific-research
-description: Scientific research workflow — experiment design, paper analysis, methodology planning, Obsidian-formatted output. Use when the user discusses 论文, 实验设计, or 科研流程.
+name: paper-experiment
+description: Paper experiment pipeline — design simulation experiments from paper methods, implement in MATLAB, run, and report results with Obsidian-formatted output. Use when the user discusses 论文实验, 仿真实验, experiment design, or 科研流程.
 ---
 
 ## 首次使用？
@@ -28,14 +28,14 @@ description: Scientific research workflow — experiment design, paper analysis,
 | **src** | scripts → lib（按阶段）→ tests → main（数据管线 + 设计决策 + 各实验数据流/参数溯源） | 代码架构、函数调用链、参数来源、数据流细节 |
 | **report** | 每个实验一个 H3 块（日期、结论、参数、指标、备注） | 实验详细数据、指标数值 |
 | **参考文献** | 论文解读 → 论文方法 | 论文内容、方法论、技术实现 |
-| **Schedule** | `# MM.DD` 日期标题 + 任务列表 + `# 问题`。只记录做了什么和待解决问题，不写怎么做（怎么做 → src） | 进度追踪、今日任务、问题跟踪 |
+| **Schedule** | `# MM.DD` 日期标题 + 任务列表 + `# 问题`。**内容由用户维护**：用户记录做了什么和待解决问题，不写怎么做（怎么做 → src） | 进度追踪、今日任务、问题跟踪 |
 
 论文 PDF/markdown 原始文件存储在项目外部的独立目录中，路径记录在 CLAUDE.md → `## Scientific Research Paths` → `论文文件夹`。目录结构与读取流程见 [references/paper-reference.md](references/paper-reference.md)。
 
 **权限：**
 - ✅ 可修改：任务复选框、脚本/函数名、文件路径、代码块引用
 - ⚠️ 用户授权后：实验目标措辞、验收标准、公式数值
-- ❌ 不可修改：论文解读内容、Schedule 内容（仅复选框 `[x]` 可打勾/取消，任务描述文字不可修改）
+- ❌ 不可修改：论文解读内容、Schedule 内容。**Schedule 只允许勾选/取消已有复选框，禁止新增/编辑任何文字（日期章节、任务条目、修复备注等）**
 
 **写前依赖检测铁律：**
 1. **写 MATLAB 脚本前必须检测环境依赖**：运行 `ver` + `license('test',...)` 确认 toolbox 可用性。详见 [references/dependency-check.md](references/dependency-check.md)。
@@ -49,19 +49,28 @@ description: Scientific research workflow — experiment design, paper analysis,
 1. **验收标准运行后填入**：实验运行前不写入具体数值。仅写"运行后报告实际精度"或"记录实际偏差与理论界对比"。
 2. **目标写验证目的，非实现步骤**：实验目标写高层验证目的，实现步骤写入流程。
 3. **目标显式引用项目目标编号**：格式 `目标 ：验证目标X.Y，<目标原文>`——写明验证的是 Note `# 目标` 中的哪个编号。
+4. **图表在设计阶段确定，不在实现时临时画**：每个实验画几张图、每张图论证什么、中英文标题模板怎么写，必须在实验设计阶段写入 Note `# 流程` 的 `产出` 字段。写脚本时严格按设计执行，不临时增减图、不临时发明标题措辞。发现设计不合理时退回到设计阶段修改 Note，不在脚本里直接改。
 
 **方法落地铁律：**
 1. **严格按论文方法实现**：实验脚本必须实现论文原文描述的方法，不得自创替代方法。论文方法在本系统上无法实施时，如实报告"无法实施"及原因（如"论文假设条件在本系统不成立，该方法无法应用"），结束实验。
 2. **论文方法不可行时如实报告**：论文方法在本系统上无法实施时，如实报告"无法实施"及原因，结束实验。禁止自创变通方案（如自创简化条件替代论文原设条件、自创替代指标替代论文原指标等）。替代方案 = 自创方法 = 造假。
 3. **论文方法是唯一依据**：写脚本前先确认论文原文对方法的描述（哪一节、哪个表、哪段话）。脚本注释中引用论文原文作为方法出处。
-4. **参数与概念来自论文原文**：实验中的变量、指标、术语必须在论文原文中有定义。论文没有的参数不用，论文没有的概念不造名称，论文已给出的矩阵/变量不称"论文未给出"。（同 论文写作铁律 #1）
+4. **参数与概念来自论文原文**：实验中的变量、指标、术语必须在论文原文中有定义。论文没有的参数不用，论文没有的概念不造名称，论文已给出的矩阵/变量不称"论文未给出"。（同 实验文字规范 #1）
 5. **实验直接验证论文公式**：实验设计必须直接验证论文的具体公式/定理/表。论文没有的分析角度不做（如论文从未提到的某种分布、论文没有定义的指标），论文没有的指标不统计（如论文只给出了理论公式就不要自创"经验界"），论文没有的对比图不画（如将量纲不同的两个量叠图——论文未做此比较）。每个实验的目标字段必须引用论文的具体公式/定理/表。（同 参数溯源铁律 #1）
 
-**论文写作铁律：**
-1. **术语来自原文**：任何术语必须在论文原文中有出处。原文未命名的量，直接用公式和变量符号指代，不自行命名。如论文中某复杂表达式没有名称，写作时直接写该表达式，不自创名称。
-2. **符号与原文一致**：变量符号、矩阵名称与所引用论文完全相同。原文用什么符号就用什么符号，不自行替换为自以为"等价"的写法。
-3. **数值仅在运行后填入**：写作中所有具体数值（如检出率、偏差值、门限值等）必须来自实际运行结果。未运行的实验不留任何数值，写"运行后填入"。
+**实验文字规范：**（脚本注释、文档、图片标注等所有实验相关文字，与论文同等严谨标准）
+1. **术语来自原文**：脚本注释、图片标注、Note/report 文档中的任何术语必须在论文原文中有出处。原文未命名的量，直接用公式和变量符号指代，不自行命名。
+2. **符号与原文一致**：变量名、矩阵名、图片坐标轴标签与所引用论文完全相同。原文用什么符号就用什么符号，不自行替换为自以为"等价"的写法。
+3. **数值仅在运行后填入**：Note 和 report 中所有具体数值（检出率、偏差值、门限值等）必须来自实际运行结果。未运行的实验不留任何数值，写"运行后填入"。
 4. **图片只标注论文参数**：实验图片的 title、legend、xlabel、ylabel、sgtitle、文本标注中，只出现论文中已定义的参数和变量。工程实现细节（如 Monte Carlo 次数、仿真步数、瞬态截止步数等运行配置参数）不得出现在图片中。图片标注应直接使用论文符号，不需要标注运行配置。`xline`/`yline` 等辅助线如确有必要保留，不要在 legend 中标注其具体数值。
+5. **图表标题传达实验目标与结果**：每张实验图的标题必须用自然语言清晰传达验证目标与核心结论，而非堆砌公式符号或描述展示内容。标题须可读——不用论文未定义的术语，不堆砌符号。分布图/直方图的标题须标注核心指标的具体数值与理论值对比。图例使用论文符号标注，不得标注工程实现参数。图表中所有术语、变量、标注必须是论文已有定义的概念或直接的文字描述，禁止自创概念。每张图必须有明确的论证目的，不画无助于验证实验目标的图。
+6. **重跑实验前清空已有产出**：重新运行实验脚本前，必须删除该实验已有的输出目录（`outputs/cn/experiment_XX/` 与 `outputs/eng/experiment_XX/` 下的 figures/、data/），确保新产出不与旧产出混淆。完成后报告清空了多少文件。
+
+**图片输出约束：**
+1. **只输出 PNG，禁止保存 .fig 文件**：`saveas(figh, 'file.png')` 即可。不保存 `.fig`（MATLAB 专有格式，无跨平台价值）。不引入 EasyPlot 等第三方绘图库——统一使用项目内置 `utils/visualizations/run_visualization`。
+2. **可视化统一入口**：所有实验脚本调用 `run_visualization(figh)` 应用论文统一格式，不在实验脚本内逐张手动设置字体/线宽/轴样式。`run_visualization` 已支持多 subplot 图窗——对图窗内所有数据坐标轴（排除图例内部轴）逐一应用格式，脚本中无需为每个 subplot 单独调用。
+3. **格式修改走 skill 审查**：如需调整全局可视化样式，修改 `utils/visualizations/` 下的对应模块，经 `code-review` 审查后应用到所有脚本。
+4. **中英双语输出**：实验产出同时生成中文与英文两版。输出目录先按语言分 `outputs/cn/` 与 `outputs/eng/` 两个一级文件夹，再在各语言文件夹下按实验分子文件夹 `experiment_XX_descriptor/{figures,data}/`。脚本在绘图段用语言标签结构体集中定义中英文标注（title/legend/xlabel/ylabel/sgtitle），按语言循环绘图、分别保存。论文图片引用遵循「中文论文 → 中文图片（`results/cn/`），英文论文 → 英文图片（`results/eng/`）」；语言无关图（拓扑/原理示意图）放 `results/` 根目录共用。
 
 **参数溯源铁律：**
 1. **每个数值标注来源**：论文未给出的所有数值必须解释怎么来的。来源只能是以下三类之一：
@@ -95,16 +104,15 @@ description: Scientific research workflow — experiment design, paper analysis,
 
 | Phase | Trigger | Read | Invoke | AI action |
 |---|---|---|---|---|
-| Paper analysis | 读论文, 解读文献, literature review | 参考文献 | `pdf-converter`, `research`, `grilling` | 解读论文，找研究缺口。[论文目录结构 →](references/paper-reference.md) |
+| Paper analysis | 读论文, 解读文献, literature review | 参考文献 | `pdf-converter`, `research`, `grilling` | 解读论文方法，确认每个公式的实现条件与边界，为实验实现做准备。[论文目录结构 →](references/paper-reference.md) |
 | Objective setting | 项目目标, 课题方向, research objective | Note | `grilling` | 基于论文提出研究目标 |
-| Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `research` | 设计实验验证目标。产出函数清单（函数名 + 论文出处 + 一句话职责 + `[手写]`/`[AI组装]`，不写签名）和每个实验的图表需求（简述验证什么，图能表达清楚即可）。每个实验的目标字段引用 Note 目标编号。**遵守方法落地铁律**。 |
+| Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `research` | 设计实验验证目标。产出函数清单（函数名 + 论文出处 + 一句话职责 + `[手写]`/`[AI组装]`，不写签名）和每个实验的图表清单（每张图的文件名、论证目的、标题模板）。每个实验的目标字段引用 Note 目标编号。图表在设计阶段定稿，不在实现时临时发明。**遵守方法落地铁律 + 实验设计铁律**。 |
 | Code architecture | 代码架构, 模块设计, 函数签名, 文件结构, 调用链, architecture | src | `codebase-design` | 基于函数清单设计文件结构、模块边界、函数调用链，确定每个函数的签名（输入/输出）和 seam。[项目结构规范 →](references/project-structure.md)。**遵守方法落地铁律**。 |
 | Prototype | 原型验证, 验证可行性, prototype, 试跑 | 参考文献 | `prototype` | （按需触发）在架构确定后对高风险模块写 throwaway 代码验证关键计算链路。触发条件与失败回路见[实验落地方案步骤 3](#实验落地方案技能加载顺序)。 |
-| Implementation | 写脚本, 实现, implement, 写代码 | Note + src | `tdd` | 以实验为单位逐个完成：AI 告知当前实验依赖的 `[手写]` 函数 → 用户手写论文核心逻辑 → AI 读签名后先写测试（期望值来自论文公式独立计算，非代码复现）→ 跑测试验证实现与论文一致 → 再写 `[AI组装]` 脚本串联管线，写完即格式化（`fix_m_code.py --apply` → 审查 diff 修正误改）→ 跑通。可视化调用已有 `utils/visualizations/`。**写 MATLAB 代码前执行依赖检测** → [references/dependency-check.md](references/dependency-check.md)。**遵守方法落地铁律**。 |
+| Implementation | 写脚本, 实现, implement, 写代码 | Note + src | `tdd` | 以实验为单位逐个完成：AI 告知当前实验依赖的 `[手写]` 函数 → 用户手写论文核心逻辑 → AI 读签名后先写测试（期望值来自论文公式独立计算，非代码复现）→ 跑测试验证实现与论文一致 → 再写 `[AI组装]` 脚本串联管线，写完即格式化（`fix_m_code.py --apply` → 审查 diff 修正误改）→ 跑通。绘图段用语言标签结构体定义中英文标注，按 `{'cn','eng'}` 循环输出两版图片。可视化统一调用 `utils/visualizations/run_visualization`，**禁引入第三方绘图库**。**写 MATLAB 代码前执行依赖检测** → [references/dependency-check.md](references/dependency-check.md)。**遵守方法落地铁律 + 图片输出约束**。 |
 | Code review | 审查代码, review, 检查脚本, 简化 | src | `code-review`, `simplify` | `code-review` 双轴审查（规范 Standards + 逻辑 Spec）；`simplify` 消除重复与冗余。 |
 | Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读 Schedule 最新日期下未完成任务 → 读 src 获取实施方案（函数、调用链、依赖）→ 实现 → 跑通后更新 Schedule 复选框，写 report。复盘操作问题（通用→skill，本项目→CLAUDE.md），执行[任务完成同步 →](references/task-completion-sync.md) |
 | Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**遵守方法落地铁律**。**依赖检测→写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
-| Thesis writing | 写论文, 写tex, 写latex, 论文写作, thesis, chapter, 章节, 写仿真 | Note + 参考文献 | — | 框架优先：搭章节框架标注数据源→逐节提案讨论→用户确认后写tex→编译验证。**遵守论文写作铁律 + 方法落地铁律**。详见 [references/thesis-writing.md](references/thesis-writing.md) |
 
 ---
 

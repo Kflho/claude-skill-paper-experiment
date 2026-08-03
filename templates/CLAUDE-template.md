@@ -115,6 +115,6 @@ git add -A && git commit -m "备份：<操作>前 — $(date +%Y-%m-%d)"
 
 ## Handoff
 
-`/clear` 后自动读取系统临时目录下的 `handoff-*.md`（按修改时间取最新），恢复上下文继续工作。
+新会话启动时，检查 `.claude/handoff/` 下最新日期的 handoff 文件并恢复上下文。
 
 ## SKILL INITIALIZED: true

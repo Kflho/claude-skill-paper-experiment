@@ -47,7 +47,7 @@ git clone https://github.com/mattpocock/skills.git ~/.agents/skills
 
 ## 核心理念
 
-**AI 只读不写。** 你的三文件（Note、参考文献、Schedule）完全由你维护。AI 的每条回复标注目标文档和章节（如 **→ Project XX Note / 目标**），你直接复制粘贴到 Obsidian。
+**AI 只读不写。** 你的三文件（Note、参考文献、Schedule）内容完全由你维护，AI 不新增/编辑任何文字。唯一例外：AI 可勾选/取消 Schedule 与 Note 中**已有**的任务复选框，但不得新增复选框或任何文字。AI 的每条回复标注目标文档和章节（如 **→ Project XX Note / 目标**），你直接复制粘贴到 Obsidian。
 
 ## 项目结构
 

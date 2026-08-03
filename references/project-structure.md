@@ -12,10 +12,15 @@ projects/                        # 所有项目（固定层，防止摊平）
         scripts/                 # 可复用脚本（可独立运行，也可被调用）
         tests/                   # 单元测试
         main/                    # 实验入口（experiment_XX_xxx.m）
-      outputs/                    # 实验产出（按实验分子文件夹）
-        experiment_XX_descriptor/
-          figures/               # 图表（PNG, FIG, PDF）
-          data/                  # 数据（MAT, CSV）
+      outputs/                    # 实验产出（先按语言分 cn/eng，再按实验分子文件夹）
+        cn/                       # 中文版实验产出
+          experiment_XX_descriptor/
+            figures/             # 图表（PNG）
+            data/                # 数据（MAT, CSV）
+        eng/                      # 英文版实验产出
+          experiment_XX_descriptor/
+            figures/             # 图表（PNG）
+            data/                # 数据（MAT, CSV）
 ```
 
 **命名与格式规范详见 [FORMAT.md](../FORMAT.md)**：
@@ -35,7 +40,7 @@ projects/                        # 所有项目（固定层，防止摊平）
 - 相对路径基准：脚本所在目录（即脚本从哪个目录运行，就是那个目录）
 - MATLAB 的 `addpath` 基于 `pwd`，因此务必从脚本所在目录运行（`cd` 到 `src/main/` / `src/tests/` / `src/scripts/` 后再执行）
 
-产出文件写到 `../../outputs/experiment_XX_xxx/` 下对应子文件夹，禁止写到项目外路径。
+产出文件写到 `../../outputs/{cn,eng}/experiment_XX_xxx/` 下对应子文件夹，禁止写到项目外路径。
 
 CLAUDE.md 中应包含完整的路径解析表，让后续工作一目了然：
 
@@ -45,5 +50,6 @@ CLAUDE.md 中应包含完整的路径解析表，让后续工作一目了然：
 | `../../../../../utils/` | 仓库根工具库 |
 | `../lib/` | 项目内部函数 |
 | `../scripts/` | 可复用脚本 |
-| `../../outputs/experiment_XX_xxx/` | 实验产出目录 |
+| `../../outputs/cn/experiment_XX_xxx/` | 中文版实验产出目录 |
+| `../../outputs/eng/experiment_XX_xxx/` | 英文版实验产出目录 |
 ```

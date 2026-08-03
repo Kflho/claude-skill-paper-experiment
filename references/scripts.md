@@ -2,23 +2,7 @@
 
 ## 写前检查：MATLAB 环境依赖
 
-**写 MATLAB 脚本前，必须确认所调用函数的 toolbox 依赖在用户环境中可用。**
-
-检测流程 → [dependency-check.md](dependency-check.md)
-
-快速检查：
-
-```bash
-# 用 exist() 检测函数是否实际安装（不用 license，它只查许可证不查安装）
-matlab -batch "ver; disp('---KEY FUNCS (0=NOT installed)---'); fns={'chi2inv','dlyap','ss','lqr','sdpvar','mosekopt'}; for i=1:length(fns), fprintf('%s: %d\n', fns{i}, exist(fns{i},'file')); end"
-```
-
-**分级处理：**
-- 🔴 刚需缺失（如 Control System Toolbox）→ 告知用户安装，**不写绕过代码**
-- 🟡 便利缺失（如 YALMIP）→ 建议安装，脚本内降级方案 + 注释标注
-- 🟢 可选缺失（如 `chi2inv`）→ 自动 `utils/` fallback
-
-> **铁律**：不确认依赖就写脚本 → 跑的时候才发现缺少 toolbox → 回滚重写。刚需和便利级缺失必须告知用户，不静谧绕过。
+**写 MATLAB 脚本前必须执行依赖检测** → 完整流程与分级处理策略见 [dependency-check.md](dependency-check.md)。
 
 ---
 
