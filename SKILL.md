@@ -35,7 +35,7 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 **权限：**
 - ✅ 可修改：任务复选框、脚本/函数名、文件路径、代码块引用
 - ⚠️ 用户授权后：实验目标措辞、验收标准、公式数值
-- ❌ 不可修改：论文解读内容、Schedule 内容。**Schedule 只允许勾选/取消已有复选框，禁止新增/编辑任何文字（日期章节、任务条目、修复备注等）**。**例外**：用户可特别授权写入问题（如 pg_04 项目约定：实现不可行/机制局限必须写入 Schedule `# 问题`，供用户如实报告导师——用户明确声明「不懂深度学习看不出来问题」）
+- ❌ 不可修改：论文解读内容、Schedule 内容。**Schedule 只允许勾选/取消已有复选框，禁止新增/编辑任何文字（日期章节、任务条目、修复备注等）**。**例外**：用户授权时，AI 可将实现问题/局限写入 Schedule `# 问题` 供用户报告。
 
 **写前依赖检测铁律：**
 1. **写 MATLAB 脚本前必须检测环境依赖**：运行 `ver` + `license('test',...)` 确认 toolbox 可用性。详见 [references/dependency-check.md](references/dependency-check.md)。
@@ -97,8 +97,8 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 1. **论文逻辑由用户手写，胶水代码由 AI 组装。** 判断标准：如果去掉论文，这个函数还需要存在吗？
    - 不需要 → `[手写]`：函数体直接实现论文中的公式、算法、变换或推导。只有用户能确保逻辑正确。
    - 需要 → `[AI组装]`：仿真循环、数据读写、管线串联、可视化、结果汇总。这些与论文内容无关，AI 可以直接编写。
-2. **凡未标注的，AI 不得实现；`[AI组装]` 脚本只调不展。** 未在步骤 1 函数清单中标注的函数，AI 不得自行实现其内部逻辑。`[AI组装]` 脚本可调用手写函数拼装实验，但不得在脚本内展开任何论文公式或推导逻辑。
-3. **用户无法手写论文逻辑的例外（DL 项目）**：当论文核心逻辑为深度学习代码且用户明确表示无法验证（如 pg_04 用户「不懂深度学习看不出来问题」），AI 按论文/PPT 原文实现，**必须以诚实上报替代用户手写**——实现不可行、机制局限、随机初始化下无法观测的信号等一律写入 Schedule `# 问题`（用户特别授权），供用户如实报告导师。禁止以「用户会复核」为前提假装正确。
+2. **`[AI组装]` 脚本只调不展。** 可调用手写函数拼装管线，但不在脚本内展开论文公式或推导。
+3. **用户授权/要求时，AI 可代写 `[手写]` 逻辑**（如用户无法验证的 DL 代码）：须按论文/PPT 原文实现，并将实现依据、局限与不确定项记入 Schedule `# 问题` 供用户复核报告。
 
 ---
 
@@ -123,9 +123,9 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 | 项目类型 | 设计阶段路由 | 适用铁律 |
 |---|---|---|
 | **论文仿真实验（MATLAB）** | Paper analysis → Experiment design（`grilling` `research`）→ Code architecture（`codebase-design`）→ Prototype → `tdd` → `code-review` | 全部（含 MATLAB 依赖检测、图片输出约束、中英双语图、`fix_m_code`） |
-| **代码扩展 / 后续工作（Python/DL，如 pg_04）** | **plan mode 设计**：EnterPlanMode → 探索代码 → 写计划 → 用户批准 → 落 vault 五文件 → `tdd` 实现 → `code-review` | 跳过 MATLAB 专属机制（`ver`/`license` 依赖检测、`run_visualization`、`outputs/cn\|eng`、`.fig`、`fix_m_code`）；保留方法落地、参数溯源、技术细节透明、实验文字规范 |
+| **代码扩展 / 后续工作（Python/DL）** | **plan mode 设计**：EnterPlanMode → 探索代码 → 写计划 → 用户批准 → 落 vault 五文件 → `tdd` 实现 → `code-review` | 跳过 MATLAB 专属机制（`ver`/`license` 依赖检测、`run_visualization`、`outputs/cn\|eng`、`.fig`、`fix_m_code`）；保留方法落地、参数溯源、技术细节透明、实验文字规范 |
 
-> **实证（2026-08-19，pg_04 Active Repair 后续工作）**：设计阶段实际走 plan mode（未调 grilling/research/codebase-design），vault 五文件照常填充、`tdd` 照常实现。此分支如实记录该行为——阶段路由不承诺未发生的调用；代码扩展类任务用 plan mode，论文仿真类任务用完整 skill 栈。
+> **阶段路由不承诺未发生的调用**：代码扩展类任务设计阶段走 plan mode（不调 grilling/research/codebase-design），vault 五文件照常填充、`tdd` 照常实现；论文仿真类任务走完整 skill 栈。
 
 ---
 
