@@ -118,15 +118,6 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 | Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读 Schedule 最新日期下未完成任务 → 读 src 获取实施方案（函数、调用链、依赖）→ 实现 → 跑通后更新 Schedule 复选框，写 report。复盘操作问题（通用→skill，本项目→CLAUDE.md），执行[任务完成同步 →](references/task-completion-sync.md) |
 | Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**遵守方法落地铁律**。**依赖检测→写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
 
-### 项目类型分支（阶段路由与 skill 实际行为对齐）
-
-| 项目类型 | 设计阶段路由 | 适用铁律 |
-|---|---|---|
-| **论文仿真实验（MATLAB）** | Paper analysis → Experiment design（`grilling` `research`）→ Code architecture（`codebase-design`）→ Prototype → `tdd` → `code-review` | 全部（含 MATLAB 依赖检测、图片输出约束、中英双语图、`fix_m_code`） |
-| **代码扩展 / 后续工作（Python/DL）** | **plan mode 设计**：EnterPlanMode → 探索代码 → 写计划 → 用户批准 → 落 vault 五文件 → `tdd` 实现 → `code-review` | 跳过 MATLAB 专属机制（`ver`/`license` 依赖检测、`run_visualization`、`outputs/cn\|eng`、`.fig`、`fix_m_code`）；保留方法落地、参数溯源、技术细节透明、实验文字规范 |
-
-> **阶段路由不承诺未发生的调用**：代码扩展类任务设计阶段走 plan mode（不调 grilling/research/codebase-design），vault 五文件照常填充、`tdd` 照常实现；论文仿真类任务走完整 skill 栈。
-
 ---
 
 ## 实验落地方案：技能加载顺序
