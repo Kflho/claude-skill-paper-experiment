@@ -25,7 +25,7 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 | Role | Sections | When to read |
 |---|---|---|
 | **Note** | 目标 → 流程 → 结论。完整结构见 [references/format.md → Note file structure](references/format.md#note-file-structure) | 项目目标、实验计划、结论汇总 |
-| **src** | scripts → lib（按阶段）→ tests → main（数据管线 + 设计决策 + 各实验数据流/参数溯源） | 代码架构、函数调用链、参数来源、数据流细节 |
+| **src** | scripts → lib（按阶段）→ tests → main（数据管线 + 设计决策 + 各实验数据流/参数溯源）。**写/更新 src.md 按 format.md § 架构段必检清单逐条满足，旧内容先重排，禁止平铺函数目录** | 代码架构、函数调用链、参数来源、数据流细节 |
 | **report** | 每个实验一个 H3 块（日期、结论、参数、指标、备注） | 实验详细数据、指标数值 |
 | **参考文献** | 论文解读 → 论文方法 | 论文内容、方法论、技术实现 |
 | **Schedule** | `# MM.DD` 日期标题 + 任务列表 + `# 问题`。**内容由用户维护**：用户记录做了什么和待解决问题，不写怎么做（怎么做 → src） | 进度追踪、今日任务、问题跟踪 |
