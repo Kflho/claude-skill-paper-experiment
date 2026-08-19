@@ -49,7 +49,7 @@ git add -A && git commit -m "备份：<操作>前 — $(date +%Y-%m-%d)"
 
 ## Obsidian 配置
 
-确保 Obsidian vault 路径已知。skill 通过项目 CLAUDE.md 中的 `## Scientific Research Paths` 读取三文件路径，不会直接写入 vault。
+确保 Obsidian vault 路径已知。skill 通过项目 CLAUDE.md 中的 `## Scientific Research Paths` 读取五文件路径，不会直接写入 vault。
 
 ## MATLAB 配置（如适用）
 

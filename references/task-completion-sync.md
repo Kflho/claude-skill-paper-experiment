@@ -69,16 +69,16 @@
 同步完成后，按 [SKILL.md Output attribution](../SKILL.md#output-attribution) 格式逐条报告更新了哪个文件、哪个位置、哪些复选框：
 
 ```
-**→ Project XX Note / 目标**
+**→ {项目名} note / 目标**
 - [x] 目标1.1 — 证明每个计算中心仅使用本地数据即可独立计算残差
 
-**→ Project XX Note / 流程 / 实验 01**
+**→ {项目名} note / 流程 / 实验 01**
 - [x] 实验 01 — 去中心化验证
 
-**→ Project XX Note / 结论 / 指标一**
+**→ {项目名} note / 结论 / 指标一**
 - 实验 01：通过。局域 vs 全局残差偏差 ∼10⁻¹⁵，验证分布式计算无精度损失。
 
-**→ Project XX report / experiment_01_xxx**
+**→ {项目名} report / experiment_01_xxx**
 ### experiment_01_xxx
 - 日期  2026-07-27
 - 结论  通过

@@ -94,7 +94,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 
 ## Experiment report format
 
-每个实验完成后，AI 在 `pg 01 report.md`（实验报告文档）追加报告。格式：
+每个实验完成后，AI 在 `{项目名} report.md`（实验报告文档）追加报告。格式：
 
 ```
 # 实验报告
@@ -186,9 +186,9 @@ Note 文件固定四个 H1 段：
 - 辅助脚本（show_liquid_level、batch_experiments）放 `## 辅助`
 - 结论不在实验中写，统一汇总到 Note `# 结论`
 
-### 架构段（→ `pg 01 src.md`）
+### 架构段（→ `{项目名} src.md`）
 
-架构（函数目录、数据管线、设计决策）已从 Note 迁移到 `pg 01 src.md`。Note `# 流程` 中的实验方法引用管线步骤（如"管线 A"），具体函数调用链和参数溯源见 src.md。
+架构（函数目录、数据管线、设计决策）已从 Note 迁移到 `{项目名} src.md`。Note `# 流程` 中的实验方法引用管线步骤（如"管线 A"），具体函数调用链和参数溯源见 src.md。
 
 src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# tests` → `# main`（共用数据管线 + 设计决策 + 各实验数据流/参数溯源）。
 
@@ -341,7 +341,8 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 
 | 规则 | 示例 |
 |---|---|
-| 全小写 snake_case，下划线分隔 | `compute_online_residuals.m`, `project_01_note.md` |
+| 代码文件全小写 snake_case，下划线分隔 | `compute_online_residuals.m`, `project_01_xxx.m` |
+| Obsidian 五文件用小写+空格，不用下划线 | `pg 04 note.md`, `pg 04 src.md`, `pg 04 report.md` |
 | 禁止数字开头 | ❌ `01_test.m` → ✅ `test_01_model_1_to_model_2.m` |
 | 顺序编号用 `类别_编号_描述` 前缀 | `test_01_`, `experiment_02_`, `project_01_` |
 | 专有名词编号中数字紧跟单词 | `model_1_to_model_2`, `experiment_01_decentralized_residual` |

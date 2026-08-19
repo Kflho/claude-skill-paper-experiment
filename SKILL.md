@@ -8,7 +8,7 @@ description: Paper experiment pipeline — design simulation experiments from pa
 检查项目 CLAUDE.md 末尾是否有 `## SKILL INITIALIZED: true`。
 
 - **没有** → 读取 `references/first-run.md`，跟随 9 步初始化向导完成配置后再继续。
-- **有** → 已初始化。从 CLAUDE.md 的 `## Scientific Research Paths` 获取三文件路径，直接进入阶段路由。
+- **有** → 已初始化。从 CLAUDE.md 的 `## Scientific Research Paths` 获取五文件路径，直接进入阶段路由。
 
 > 重新初始化：删除 CLAUDE.md 中的 `SKILL INITIALIZED: true` 行。
 
@@ -30,7 +30,7 @@ description: Paper experiment pipeline — design simulation experiments from pa
 | **参考文献** | 论文解读 → 论文方法 | 论文内容、方法论、技术实现 |
 | **Schedule** | `# MM.DD` 日期标题 + 任务列表 + `# 问题`。**内容由用户维护**：用户记录做了什么和待解决问题，不写怎么做（怎么做 → src） | 进度追踪、今日任务、问题跟踪 |
 
-论文 PDF/markdown 原始文件存储在项目外部的独立目录中，路径记录在 CLAUDE.md → `## Scientific Research Paths` → `论文文件夹`。目录结构与读取流程见 [references/paper-reference.md](references/paper-reference.md)。
+论文 PDF/markdown 的存放位置在初始化时确定（可在项目内，如 `references/`，无需强制外部目录），记录在 CLAUDE.md → `## Scientific Research Paths` → `论文文件夹`。目录结构与读取流程见 [references/paper-reference.md](references/paper-reference.md)。
 
 **权限：**
 - ✅ 可修改：任务复选框、脚本/函数名、文件路径、代码块引用
@@ -144,19 +144,19 @@ description: Paper experiment pipeline — design simulation experiments from pa
 每条 AI 回复标注入目标文档和章节：
 
 ```
-**→ Project XX Note / 目标**
+**→ {项目名} note / 目标**
 ... content ...
 
-**→ Project XX src / 数据管线**
+**→ {项目名} src / 数据管线**
 ... content ...
 
-**→ Project XX report / experiment_XX**
+**→ {项目名} report / experiment_XX**
 ... content ...
 
-**→ Project XX 参考文献 / 论文方法**
+**→ {项目名} 参考文献 / 论文方法**
 ... content ...
 
-**→ Project XX Schedule / MM.DD**
+**→ {项目名} schedule / MM.DD**
 ... content ...
 ```
 

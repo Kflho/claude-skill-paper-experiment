@@ -2,7 +2,7 @@
 
 ## 目录结构
 
-论文 PDF 和 markdown 存储在项目外部的独立目录中，路径在初始化时记录到项目 CLAUDE.md 的 `## Scientific Research Paths` 表中（`论文文件夹` 字段）。
+论文 PDF 和 markdown 的存放位置在初始化时确定（可在项目内，如 `references/`，无需强制外部目录），记录到项目 CLAUDE.md 的 `## Scientific Research Paths` 表中（`论文文件夹` 字段）。
 
 每篇论文在论文文件夹下有自己的子文件夹，以论文标题命名（PDF 文件名去掉 `.pdf`）：
 
@@ -14,7 +14,7 @@
     paper_p1-5.md           # 前 5 页 markdown（可选）
 ```
 
-论文文件夹独立于项目仓库——不在 `projects/` 目录内，不参与项目 git 追踪。
+论文文件夹位置在初始化时确定（可在项目内，也可在外部目录）。若在项目内，按需用 `.gitignore` 排除大文件（如 PDF/PPTX）。
 
 ## 读取流程
 
@@ -27,5 +27,5 @@
 
 ## 两类文献文件的区别
 
-- **Obsidian `Project XX 参考文献.md`**：用户自己的解读笔记，AI 只读不写。
+- **Obsidian `{项目名} 参考文献.md`**：用户自己的解读笔记，AI 只读不写。
 - **`<论文文件夹>/<Paper Title>/paper_full.md`**：原始论文文本，供 AI 在方法论和实验设计阶段查阅。

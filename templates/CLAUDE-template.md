@@ -4,10 +4,12 @@
 
 | Role | Path |
 |---|---|
-| Note | `<project_note_path>` |
+| note | `<project_note_path>` |
+| src | `<project_src_path>` |
+| report | `<project_report_path>` |
 | 参考文献 | `<project_ref_path>` |
-| Schedule | `<project_schedule_path>` |
-| 论文文件夹 | `<papers_dir_path>` |
+| schedule | `<project_schedule_path>` |
+| 论文文件夹 | `<papers_dir_path>`（可在项目内，如 `references/`） |
 
 ## 项目仓库
 
