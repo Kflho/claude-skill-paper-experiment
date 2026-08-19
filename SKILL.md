@@ -67,7 +67,7 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 5. **图表标题传达实验目标与结果**：每张实验图的标题必须用自然语言清晰传达验证目标与核心结论，而非堆砌公式符号或描述展示内容。标题须可读——不用论文未定义的术语，不堆砌符号。分布图/直方图须标注核心指标的具体数值与理论值对比（数值入图例，标题保持单行）。图例使用论文符号标注，不得标注工程实现参数。图表中所有术语、变量、标注必须是论文已有定义的概念或直接的文字描述，禁止自创概念。每张图必须有明确的论证目的，不画无助于验证实验目标的图。
 6. **重跑实验前清空已有产出**：重新运行实验脚本前，必须删除该实验已有的输出目录（`outputs/cn/experiment_XX/` 与 `outputs/eng/experiment_XX/` 下的 figures/、data/），确保新产出不与旧产出混淆。完成后报告清空了多少文件。
 
-**图片输出约束：**
+**图片输出约束（MATLAB 项目）：**
 1. **只输出 PNG，禁止保存 .fig 文件**：`saveas(figh, 'file.png')` 即可。不保存 `.fig`（MATLAB 专有格式，无跨平台价值）。不引入 EasyPlot 等第三方绘图库——统一使用项目内置 `utils/visualizations/run_visualization`。
 2. **可视化统一入口**：所有实验脚本调用 `run_visualization(figh)` 应用论文统一格式，不在实验脚本内逐张手动设置字体/线宽/轴样式。`run_visualization` 已支持多 subplot 图窗——对图窗内所有数据坐标轴（排除图例内部轴）逐一应用格式，脚本中无需为每个 subplot 单独调用。
 3. **格式修改走 skill 审查**：如需调整全局可视化样式，修改 `utils/visualizations/` 下的对应模块，经 `code-review` 审查后应用到所有脚本。
@@ -106,6 +106,8 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 
 根据用户输入识别科研阶段：
 
+> **设计流程语言无关**：实验设计 → 代码架构 → 审查流程对任何脚本语言一致；语言差异只出现在写脚本阶段（MATLAB 依赖检测/格式化/图片约束，Python/DL 用对应生态），不设语言分支流程。
+
 | Phase | Trigger | Read | Invoke | AI action |
 |---|---|---|---|---|
 | Paper analysis | 读论文, 解读文献, literature review | 参考文献 | `pdf-converter`, `research`, `grilling` | 解读论文方法，确认每个公式的实现条件与边界，为实验实现做准备。[论文目录结构 →](references/paper-reference.md) |
@@ -113,10 +115,10 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 | Experiment design | 设计实验, 怎么验证, experiment design | Note + 参考文献 | `grilling`, `research` | 设计实验验证目标。产出函数清单（函数名 + 论文出处 + 一句话职责 + `[手写]`/`[AI组装]`，不写签名）和每个实验的图表清单（每张图的文件名、论证目的、标题模板）。每个实验的目标字段引用 Note 目标编号。图表在设计阶段定稿，不在实现时临时发明。**遵守方法落地铁律 + 实验设计铁律**。产出清单后追加**方法适用性核对**：对每个实验逐条核对论文方法在本系统的适用前提（各子系统传感器/测量配置 vs 方法所需数据、秩条件、Table 步骤在具体 M/N 下的可实施性），每实验记一句结论——适用，或「论文方法不适用」→ 按铁律 #1/#2 退回设计阶段。 |
 | Code architecture | 代码架构, 模块设计, 函数签名, 文件结构, 调用链, architecture | src | `codebase-design` | 基于函数清单设计文件结构、模块边界、函数调用链，确定每个函数的签名（输入/输出）和 seam。[项目结构规范 →](references/project-structure.md)。**遵守方法落地铁律**。 |
 | Prototype | 原型验证, 验证可行性, prototype, 试跑 | 参考文献 | `prototype` | （按需触发）在架构确定后对高风险模块写 throwaway 代码验证关键计算链路。触发条件与失败回路见[实验落地方案步骤 3](#实验落地方案技能加载顺序)。 |
-| Implementation | 写脚本, 实现, implement, 写代码 | Note + src | `tdd` | 以实验为单位逐个完成：AI 告知当前实验依赖的 `[手写]` 函数 → 用户手写论文核心逻辑 → AI 读签名后先写测试（期望值来自论文公式独立计算，非代码复现）→ 跑测试验证实现与论文一致 → 再写 `[AI组装]` 脚本串联管线，写完即格式化（`fix_m_code.py --apply` → 审查 diff 修正误改）→ **忠实跑通**（跑通 + 无未标注偏离：每条偏离论文的代码分支须归入①「论文方法不适用」（已报告并退回设计阶段）或②「论文未指定，实现选择」（已按格式记入落点），两者皆非不得继续）。绘图段用语言标签结构体定义中英文标注，按 `{'cn','eng'}` 循环输出两版图片。可视化统一调用 `utils/visualizations/run_visualization`，**禁引入第三方绘图库**。**写 MATLAB 代码前执行依赖检测** → [references/dependency-check.md](references/dependency-check.md)。开始实现前确认「论文未指定，实现选择」记录的落点存在（src.md 设计决策段，或 note/report 对应段），无落点先补。**遵守方法落地铁律 + 图片输出约束**。 |
+| Implementation | 写脚本, 实现, implement, 写代码 | Note + src | `tdd` | 以实验为单位逐个完成：AI 告知当前实验依赖的 `[手写]` 函数 → 用户手写论文核心逻辑 → AI 读签名后先写测试（期望值来自论文公式独立计算，非代码复现）→ 跑测试验证实现与论文一致 → 再写 `[AI组装]` 脚本串联管线 → **忠实跑通**（跑通 + 无未标注偏离：每条偏离论文的代码分支须归入①「论文方法不适用」（已报告并退回设计阶段）或②「论文未指定，实现选择」（已按格式记入落点），两者皆非不得继续）。开始实现前确认「论文未指定，实现选择」记录的落点存在（src.md 设计决策段，或 note/report 对应段），无落点先补。**遵守方法落地铁律**。**MATLAB 项目追加**：写完即格式化（`fix_m_code.py --apply` → 审查 diff 修正误改）、绘图走 `run_visualization` 中英双语（见图片输出约束）、写码前执行依赖检测 → [references/dependency-check.md](references/dependency-check.md)。 |
 | Code review | 审查代码, review, 检查脚本, 简化 | src | `code-review` | `code-review` 双轴审查（规范 Standards + 逻辑 Spec）**+ 论文符合性轴**：判定标准/门限/归一化来自论文公式或已标注「论文未指定，实现选择」；论文方法无法实施的步骤已如实报告而非静默绕过；理论级不适用（铁律 #6）已上报。发现重复/冗余时**提示用户手动运行 `/simplify`**（user-invoked skill：AI 不能自动调用，只有用户能触发）。 |
 | Task planning | 今天做什么, 进度, plan | Note + Schedule | — | 读 Schedule 最新日期下未完成任务 → 读 src 获取实施方案（函数、调用链、依赖）→ 实现 → 跑通后更新 Schedule 复选框，写 report。复盘操作问题（通用→skill，本项目→CLAUDE.md），执行[任务完成同步 →](references/task-completion-sync.md) |
-| Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**遵守方法落地铁律**。**依赖检测→写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
+| Batch writing | 批量写脚本, fan-out, 并行编写, 同时写多个, 多个实验脚本 | Note + Schedule | — | 并行编写多个独立脚本。**遵守方法落地铁律**。**（MATLAB：依赖检测）→写→格式化→审查diff→跑** → [references/fan-out-writing.md](references/fan-out-writing.md) |
 
 ---
 
@@ -126,10 +128,10 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 
 | 步骤 | 加载技能 | 做什么 | 产出 → 五文件 |
 |---|---|---|---|
-| 1. 实验设计 | `grilling` `research` | `research` 深读论文方法，确认每个公式的实现条件与边界；`grilling` 拷问实验设计（指标选择、假设条件、论文方法可行性） | Note `# 流程`：函数清单，每个函数标注 `[手写]` 或 `[AI组装]`，给出函数名 + 论文出处（对应哪个公式/量）+ 一句话职责（不写签名——签名在步骤 2 确定）。每个实验列出需要的图表及其验证目的（简述验证什么，不指定图类型和样式——画图用 `utils/visualizations/`） |
+| 1. 实验设计 | `grilling` `research` | `research` 深读论文方法，确认每个公式的实现条件与边界；`grilling` 拷问实验设计（指标选择、假设条件、论文方法可行性） | Note `# 流程`：函数清单，每个函数标注 `[手写]` 或 `[AI组装]`，给出函数名 + 论文出处（对应哪个公式/量）+ 一句话职责（不写签名——签名在步骤 2 确定）。每个实验列出需要的图表及其验证目的（简述验证什么，不指定图类型和样式——画图遵循项目可视化约定） |
 | 2. 代码架构 | `codebase-design` | 设计文件结构、模块边界、函数调用链，基于调用链确定每个函数的签名（输入/输出）和 seam | src：架构 + 调用链 + 函数签名 |
 | 3. 原型验证 | `prototype` | （按需触发）在已确定的架构内，对高风险模块写 throwaway 代码验证关键计算链路是否可行。触发条件（任一满足即进入）：(a) 论文方法首次在本系统实现、(b) 计算链路跨多个 `[手写]` 函数接口有风险、(c) 依赖的外部工具/求解器未经本项目验证。其余情况跳过，步骤 2 之后直接进步骤 4。失败回路（适用于设计/原型/实现各阶段发现"论文方法无法实施"时，不限于原型验证）：论文方法本身不可行 → 退步骤 1（重新设计实验）；论文方法可行但实现路径有问题 → 退步骤 2（调整架构/接口/调用链） | 验证结论（通过/不可行/需调整），失败时注明类别，不产出正式代码 |
-| 4. 脚本实现 | `tdd` | 以实验为单位逐个完成：AI 告知当前实验依赖哪些 `[手写]` 函数 → 用户手写论文核心逻辑（DL 项目见核心计算铁律 #3 例外）→ AI 读取实际签名后，先写测试（期望值来自论文公式独立计算，非代码复现）→ 跑测试验证手写实现与论文一致 → 再写 `[AI组装]` 脚本串联管线。AI 写完立即格式化（`fix_m_code.py --apply` → 审查 diff 修正误改）→ 跑通。可视化统一调用 `utils/visualizations/`；数据可视化辅助（`dataviz` 为 user-invoked，AI 不能自动调用）→ **提示用户手动运行 `/dataviz`**。多脚本并行 → [fan-out](references/fan-out-writing.md) | src + tests：可运行脚本 |
+| 4. 脚本实现 | `tdd` | 以实验为单位逐个完成：AI 告知当前实验依赖哪些 `[手写]` 函数 → 用户手写论文核心逻辑（DL 项目见核心计算铁律 #3 例外）→ AI 读取实际签名后，先写测试（期望值来自论文公式独立计算，非代码复现）→ 跑测试验证手写实现与论文一致 → 再写 `[AI组装]` 脚本串联管线 → 跑通。**MATLAB 项目**：写完立即格式化（`fix_m_code.py --apply` → 审查 diff 修正误改）、可视化统一调用 `utils/visualizations/`。数据可视化辅助（`dataviz` 为 user-invoked，AI 不能自动调用）→ **提示用户手动运行 `/dataviz`**。多脚本并行 → [fan-out](references/fan-out-writing.md) | src + tests：可运行脚本 |
 | 5. 审查 | `code-review` | `code-review` 规范检查（Standards，含 Fowler smell）+ 逻辑审查（Spec）；发现重复/冗余**提示用户手动运行 `/simplify`**（user-invoked，AI 不能自动调用） | report：审查结论 |
 
 各步骤发现问题时的回路：
@@ -173,7 +175,7 @@ Obsidian 默认 Tab 缩进，Claude Code Edit 工具不支持 Tab（[Issue #9163
 
 ## 任务完成同步
 
-**五部分同步铁律**：目标(Note `# 目标`) ↔ 实验计划(Note `# 流程`) ↔ 实验报告(report) ↔ 实验脚本(MATLAB) ↔ 项目日程表(Schedule)。**任一部分更新后必须检查其余四部分。**
+**五部分同步铁律**：目标(Note `# 目标`) ↔ 实验计划(Note `# 流程`) ↔ 实验报告(report) ↔ 实验脚本 ↔ 项目日程表(Schedule)。**任一部分更新后必须检查其余四部分。**
 
 详细同步清单与操作步骤 → [references/task-completion-sync.md](references/task-completion-sync.md)。完成后按 Output attribution 格式逐条报告更新。
 
