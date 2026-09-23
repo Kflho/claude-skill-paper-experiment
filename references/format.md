@@ -200,6 +200,7 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 3. 共用数据管线编号步骤 + `函数名(参数) → 产出变量`，每步标注 I/O 溯源（输入←来源、论文公式出处、输出物理含义）。
 4. 设计决策与参数溯源独立成段，论文未给出的数值标注来源（论文/推导/经验选择）。
 5. 每个实验一块：做什么 + 数据流（具体到函数名和变量名）+ 参数溯源 + 产出。
+6. **文件清单复选框 ≠ 数据流纯参考**：`# scripts`/`# lib`/`# tests` 每项是「已实现文件/函数清单」，用 `- [x]` 标已实现（实现时边写边标）。`# main`「各实验数据流」的每条实验是仅看描述（做什么 + 数据流 + 产出），**不带任务复选框**；实验完成/进行中状态只写在 Note `# 流程` 与 Schedule，src 不重复。
 
 **语言无关**：四段结构适用所有脚本语言。Python/DL 项目映射：`scripts`=命令行入口（sh/py），`lib`=包模块按流水线阶段分组（数据预处理→主干模型→方法模块→训练器），`tests`=pytest，`main`=训练/推理管线+各实验数据流。所有权标注 `[手写]`/`[AI组装]` 同 MATLAB；用户授权时 AI 代写论文逻辑标 `[AI代写]`（见核心计算铁律 #3）。
 
@@ -273,7 +274,7 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
         - `results.mat` — 包含 <变量列表>，用于 <用途>
   ```
 
-- [x] `experiment_01_decentralized_residual` — 目标 1.1
+- `experiment_01_decentralized_residual` — 目标 1.1
   - 做什么：调用管线 A+B+C。先对所有中心一起算残差，再逐个中心单独算，对比偏差。
   - 数据流：`create_model_1 → model_1_to_model_2 → ... → compute_online_residuals`
   - 产出：局域 vs 全局残差最大偏差 $\sim 10^{-15}$。
@@ -332,19 +333,26 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 | 保留大写 | 示例 | 说明 |
 |---|---|---|
 | 矩阵变量 | `A`, `B_z`, `L_ω`, `A_{z,ω}`, `Sigma_w` | 单大写字母 + 可选下标 |
+| 压缩符号 | `Cw`, `Sv`, `Cg_w`, `Azw`, `Gzw` | 两字符符号（大写+小写/数字）与三字符压缩矩阵符号（三字符的需入项目词表） |
+| 论文符号段 | `err_A`, `rank_H1`, `cond_A`, `use_exact_Cg` | 变量含完整论文符号时**整名保留**——符号部分照论文写法（`err_A` 是「A 的误差」，不是 `err_a`） |
 | 人名 | Kalman, Lyapunov, Schur, Luenberger | 专有名词 |
 | 缩写 acronym | LMI, DARE, SVD, MCU, PCB, FPGA | 全大写缩写 |
 | 品牌/产品名 | MATLAB, Simulink, Obsidian | 官方拼写 |
 | 希腊字母 | `Ω`, `ω`, `Δ`, `Σ` | Unicode 数学符号 |
+| 单位与维度标签 | `dB`, `kHz`, `ms`, `2D cell array` | 大小写是符号的一部分，且常贴着数字写（`3dB`） |
 | MATLAB pragma | `%#ok<AGROW>` | 代码检查抑制指令 |
 | 外部 API 属性名 | `sim_w.Data`, `sim_v.Data`, `sim_w.Time` | 由外部 API 定义的属性名，大小写必须与 API 文档一致 |
 
 **外部 API 属性名识别规则**：当变量名引用外部对象（Simulink timeseries、MATLAB 对象、第三方库）的属性时，属性名的大小写由该对象的 API 决定，不得修改。常见场景：
 - `sim_w.Data` / `sim_v.Data` — Simulink `timeseries` 对象的属性，必须大写 `D`
 - `sim_w.Time` — 同上，必须大写 `T`
-- `obj.PropertyName` — 任何 `.` 访问的外部对象属性，格式化前先确认 API 文档
+- `obj.PropertyName` — 任何 `.` 访问的对象属性，`fix_m_code.py` 一律不改（它分不清对象是外部还是本项目，而定义处与引用处都写作 `对象.属性`，一律不改才能保持一致）
 
 其余一律小写：函数名、模块名、文件夹名、文档名、普通描述文本。
+
+**注释文本的既定小写范围**（复核时按此判断，不算误改）：注释里的英文单词与小标题会被小写（`Inputs:` → `inputs:`、`Example` → `example`、`Note` → `note`）。缩写、`标签 + 序号`（`Theorem 1`、`Model 3`、`Table I`）、含论文符号段的词、`$…$`、URL、路径、引号内内容不受影响。确有必须保留的专名 → 加进项目词表（见 [scripts.md](scripts.md)）。
+
+**中文紧邻的符号**：中文后紧跟的单个大写字母是符号引用（`条件A`、`矩阵Q`、`见S_i`），保留——它与下文的 `A ∧ B` 是对应关系，小写化会切断这层对应。这类位置最容易漏保护，因为脚本的边界定义必须把中文当分隔符（`fix_m_code.py` 用 `NB_L`/`NB_R` 而非 `\b`，Python 的 `\b` 把中文算作词字符，会让整条保护规则静默失效）。
 
 ## File naming
 
@@ -371,4 +379,4 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 - 变量名 snake_case，矩阵变量可大写（`A`, `B_z`, `Sigma_w`）
 - 函数名全小写 snake_case，与文件名一致
 - 注释文本遵循上述所有规则，矩阵引用与代码一致
-- 写完代码后运行 `fix_m_code.py` 自动规范化，修复引入的 bug
+- 写完代码后按 [scripts.md](scripts.md) 的格式化工作流规范化大小写（`--diff` 逐 hunk 审查 → `--apply`）

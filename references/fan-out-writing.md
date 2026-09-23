@@ -2,7 +2,7 @@
 
 > 并行编写多个独立脚本的工作流。一次准备，N 个 agent 同时写，主线程零 token 增量。
 >
-> **铁律：写 → 格式化 → 审查 diff → 跑。** 格式化必须在跑之前完成，否则格式化器改坏的 API 属性名（如 `sim_w.Data` → `sim_w.data`）会导致运行时错误。
+> **铁律：写 → 格式化 → 审查 diff → 跑**（工作流与判定基准见 [scripts.md](scripts.md)）——格式化排在跑之前，改坏的地方才不会伪装成运行错误。
 
 ## Decision gate
 
@@ -71,7 +71,7 @@ no narrative.
 
 ## Phase 2: Dispatch + Format
 
-**做什么**：为每个目标脚本启动 1 个 general-purpose agent 并行编写，写完后立即格式化并审查 diff。
+**做什么**：为每个目标脚本启动 1 个 general-purpose agent 并行编写。
 
 **谁做**：主线程组装 prompt，N 个 agent 并行；主线程在 agent 返回后立即对每个产出文件执行格式化+diff 审查。
 
@@ -109,21 +109,15 @@ Write a complete [language] script `[relative/path/to/script.ext]` for the proje
 Write ONLY the file [path]. Do NOT modify any existing files.
 ```
 
-**Agent 返回后，主线程立即对每个产出文件执行格式化**：
+**Agent 返回后，主线程立即对每个产出文件逐个文件走一遍格式化审查**（工作流、判定基准、词表契约见 [scripts.md](scripts.md)——**有罪推定**，逐 hunk 判定，不留未判项）：
 
-```
-对每个新写的脚本：
-  1. cp script.m script.m.bak — 备份
-  2. python fix_m_code.py script.m --apply — 格式化
-  3. diff script.m.bak script.m — 生成 diff
-  4. AI 审查 diff，分类处理：
-     🔴 外部 API 属性名被改 → 还原（如 sim_w.data → sim_w.Data）
-     🟡 命名冲突暴露 → 改变量名（如 Omega → n_omega），不还原格式
-     🟢 注释专有名词被改 → 还原（如 t² → T²，model 1 → Model 1）
-  5. rm script.m.bak — 清理
+```bash
+python ~/.claude/skills/paper-experiment/scripts/fix_m_code.py <新写的脚本> --diff
 ```
 
-**Completion criterion**：每个脚本文件存在、格式化完成、diff 已审查、误改已纠正、.bak 已清理。
+批量产出时这一步尤其不能跳：文件多、改动多，按「看着像规范化」放行一次的代价会摊到每个文件上。
+
+**Completion criterion**：每个脚本文件存在、每个文件都走过一遍审查（`--check` 退出码 0，或每处改动都有判定结论）、误改已纠正并进项目词表、`.bak` 已清理。
 
 **Agent 数**：N = 目标脚本数。若 N > 4，分批（每批 ≤4 个），避免 agent 间上下文干扰。
 

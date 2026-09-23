@@ -93,28 +93,6 @@ git add -A && git commit -m "备份：<操作>前 — $(date +%Y-%m-%d)"
 
 > 实验代码迭代快、产出多。git 是唯一保险——没有撤销按钮。
 
-## 任务进度
-
-### scripts — 参数与仿真脚本
-- [ ] `create_model_1.m`
-- [ ] `init_parameters.m`
-- [ ] `start_simulation.m`
-
-### lib — 核心算法
-- [ ] 1. 模型等价转换（model_1_to_model_2, assemble_global_model）
-- [ ] 2. 分布式残差生成器离线设计（solve_luenberger_lmi, split_matrices_and_cov）
-- [ ] 3. 未知输入模型（model_2_to_model_3_qr）
-- [ ] 4. 在线计算（compute_online_residuals, inject_fault, recursive_joint_filter）
-
-### tests — 验证
-- [ ] 单元测试（test_01 ~ test_09）
-- [ ] 实验 01 — 去中心化验证（目标 1.1）
-- [ ] 实验 02 — 零均值验证（目标 1.2）
-- [ ] 实验 03 — T² 检测（目标 2.1）
-- [ ] 实验 04 — 可检测性边界（目标 2.2）
-- [ ] 实验 05 — 粗定位（目标 3.1）
-- [ ] 实验 06 — 精定位（目标 3.2）
-
 ## Handoff
 
 新会话启动时，检查 `.claude/handoff/` 下最新日期的 handoff 文件并恢复上下文。
