@@ -2,7 +2,7 @@
 
 ## 目录结构
 
-论文 PDF 和 markdown 的存放位置在初始化时确定（可在项目内，如 `references/`，无需强制外部目录），记录到项目 CLAUDE.md 的 `## Scientific Research Paths` 表中（`论文文件夹` 字段）。
+论文 PDF 和 markdown 的存放位置在初始化时确定（项目内默认 `bin/references/`，也可用外部目录），记录到项目 CLAUDE.md 的 `## Scientific Research Paths` 表中（`论文文件夹` 字段）。
 
 每篇论文在论文文件夹下有自己的子文件夹，以论文标题命名（PDF 文件名去掉 `.pdf`）：
 
@@ -14,7 +14,7 @@
     paper_p1-5.md           # 前 5 页 markdown（可选）
 ```
 
-论文文件夹位置在初始化时确定（可在项目内，也可在外部目录）。若在项目内，按需用 `.gitignore` 排除大文件（如 PDF/PPTX）。
+论文文件夹位置在初始化时确定（项目内默认 `bin/references/`，也可在外部目录）。若在项目内，按需用 `.gitignore` 排除大文件（如 PDF/PPTX）。
 
 ## 读取流程
 

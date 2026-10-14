@@ -30,7 +30,7 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 | **参考文献** | 论文解读 → 论文方法 | 论文内容、方法论、技术实现 |
 | **Schedule** | `# MM.DD` 日期标题 + 任务列表 + `# 问题`。**内容由用户维护**：用户记录做了什么和待解决问题，不写怎么做（怎么做 → src） | 进度追踪、今日任务、问题跟踪 |
 
-论文 PDF/markdown 的存放位置在初始化时确定（可在项目内，如 `references/`，无需强制外部目录），记录在 CLAUDE.md → `## Scientific Research Paths` → `论文文件夹`。目录结构与读取流程见 [references/paper-reference.md](references/paper-reference.md)。
+论文 PDF/markdown 的存放位置在初始化时确定（项目内默认 `bin/references/`，也可用外部目录），记录在 CLAUDE.md → `## Scientific Research Paths` → `论文文件夹`。目录结构与读取流程见 [references/paper-reference.md](references/paper-reference.md)。
 
 **权限：**
 - ✅ 可修改：任务复选框、脚本/函数名、文件路径、代码块引用
@@ -64,13 +64,13 @@ description: Paper experiment pipeline — design experiments from paper/PPT met
 3. **数值仅在运行后填入**：Note 和 report 中所有具体数值（检出率、偏差值、门限值等）必须来自实际运行结果。未运行的实验不留任何数值，写"运行后填入"。
 4. **图片只标注论文参数**：实验图片的 title、legend、xlabel、ylabel、sgtitle、文本标注中，只出现论文中已定义的参数和变量。工程实现细节（如 Monte Carlo 次数、仿真步数、瞬态截止步数等运行配置参数）不得出现在图片中。图片标注应直接使用论文符号，不需要标注运行配置。`xline`/`yline` 等辅助线（门限、±3σ 等）如确有必要保留，其数值标注在图例中（如 `J_{th}=5.00`、`±3σ=4.56e-16`），不放标题。
 5. **图表标题传达实验目标与结果**：每张实验图的标题必须用自然语言清晰传达验证目标与核心结论，而非堆砌公式符号或描述展示内容。标题须可读——不用论文未定义的术语，不堆砌符号。分布图/直方图须标注核心指标的具体数值与理论值对比（数值入图例，标题保持单行）。图例使用论文符号标注，不得标注工程实现参数。图表中所有术语、变量、标注必须是论文已有定义的概念或直接的文字描述，禁止自创概念。每张图必须有明确的论证目的，不画无助于验证实验目标的图。
-6. **重跑实验前清空已有产出**：重新运行实验脚本前，必须删除该实验已有的输出目录（`outputs/cn/experiment_XX/` 与 `outputs/eng/experiment_XX/` 下的 figures/、data/），确保新产出不与旧产出混淆。完成后报告清空了多少文件。
+6. **重跑实验前清空已有产出**：重新运行实验脚本前，必须删除该实验已有的产出目录（`bin/images/{cn,eng}/experiment_XX/` 与 `bin/data/{cn,eng}/experiment_XX/`），确保新产出不与旧产出混淆。完成后报告清空了多少文件。
 
 **图片输出约束（MATLAB 项目）：**
 1. **只输出 PNG，禁止保存 .fig 文件**：`saveas(figh, 'file.png')` 即可。不保存 `.fig`（MATLAB 专有格式，无跨平台价值）。不引入 EasyPlot 等第三方绘图库——统一使用项目内置 `utils/visualizations/run_visualization`。
 2. **可视化统一入口**：所有实验脚本调用 `run_visualization(figh)` 应用论文统一格式，不在实验脚本内逐张手动设置字体/线宽/轴样式。`run_visualization` 已支持多 subplot 图窗——对图窗内所有数据坐标轴（排除图例内部轴）逐一应用格式，脚本中无需为每个 subplot 单独调用。
 3. **格式修改走 skill 审查**：如需调整全局可视化样式，修改 `utils/visualizations/` 下的对应模块，经 `code-review` 审查后应用到所有脚本。
-4. **中英双语输出**：实验产出同时生成中文与英文两版。输出目录先按语言分 `outputs/cn/` 与 `outputs/eng/` 两个一级文件夹，再在各语言文件夹下按实验分子文件夹 `experiment_XX_descriptor/{figures,data}/`。脚本在绘图段用语言标签结构体集中定义中英文标注（title/legend/xlabel/ylabel/sgtitle），按语言循环绘图、分别保存。论文图片引用遵循「中文论文 → 中文图片（`results/cn/`），英文论文 → 英文图片（`results/eng/`）」；语言无关图（拓扑/原理示意图）放 `results/` 根目录共用。
+4. **中英双语输出**：实验产出同时生成中文与英文两版。图写 `bin/images/{cn,eng}/experiment_XX_descriptor/`，数据写 `bin/data/{cn,eng}/experiment_XX_descriptor/`——先分语言，再分实验。脚本在绘图段用语言标签结构体集中定义中英文标注（title/legend/xlabel/ylabel/sgtitle），按语言循环绘图、分别保存。论文图片引用遵循「中文论文 → 中文图片（`bin/images/cn/`），英文论文 → 英文图片（`bin/images/eng/`）」；语言无关图（拓扑/原理示意图）放 `bin/images/` 根目录共用。
 5. **标题严格单行且不超出图片**：图标题禁止带实验编号（"实验 01"、"Exp. 01"）等无关前缀，措辞精简、传达验证目标即可。**标题禁止换行**（多行标题会纵向溢出图外）。单栏图标题有效宽度 ≤48（CJK 全宽字计 2、ASCII 计 1，即约 ≤24 个中文字或 ≤48 个英文字母）；`run_visualization` 检测到超宽标题时**只告警不换行**，在运行日志打印 `[run_visualization] 标题超宽(...)，需精简措辞: <标题>`。**每次跑完必须读取运行日志中的该告警**：对每条被告警的标题，AI 精简措辞（删冗余修饰、去可由上下文推导的信息；数值型标注如均值/σ 放入图例而非标题）后重跑对应实验，直至无告警。
 6. **参数入图例，标题留目标**：实验相关的数值参数（均值、σ、门限、故障幅值等）一律标注在图例中（如 `±3σ=4.56e-16`、`J_{th}=5.00`），标题只保留验证目标与核心结论的自然语言描述——参数不占标题，标题才能保持短、单行、可读。
 7. **出图后必须看图**：图一生成就逐张打开图片文件看——非空白、曲线与坐标/图例符合预期、标题单行。论文里的图再看一遍所在页：`pdftocairo -png -r 100 <pdf> <前缀>` 渲染后逐页目视核对（图片是占位空白文件时编译照样通过、页数照样对，所以退出码与页数不算核过）。核对范围 = 本次产出的**每一张**图（中英双语两套）＋论文引用的每一张；空白或错图回到生成脚本改、重跑出图。
@@ -185,4 +185,12 @@ Obsidian 默认 Tab 缩进，Claude Code Edit 工具不支持 Tab（[Issue #9163
 
 ## Project structure
 
-新建项目默认结构 → [references/project-structure.md](references/project-structure.md)。已有项目初始化时扫描实际目录自动适配。
+项目按**领域**就地存放，不集中到一个全局项目文件夹里：
+
+```
+<领域根>/{utils/, projects/<分类>/<缩写>_<编号>/}
+```
+
+单个项目内部三层分工：`dev/`（过程记录）、`src/`（代码）、`bin/`（资产与产物：`doc/ template/ images/ data/ references/ exports/`）。**实验产出写 `bin/`，不再用 `outputs/`。**
+
+新建项目默认结构 → [references/project-structure.md](references/project-structure.md)。**目录名只是默认约定**——已有项目初始化时扫描实际目录自动适配，不强行改名、不强制迁移。

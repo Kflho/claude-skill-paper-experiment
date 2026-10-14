@@ -123,7 +123,7 @@ test -d ~/.claude/skills/grilling && echo "[OK] grilling"
 
 ### 图片输出约束
 - 只输出 **PNG**，禁止 `.fig`
-- **中英双语输出**：`outputs/cn/` 与 `outputs/eng/` 各一份
+- **中英双语输出**：`bin/images/{cn,eng}/` 与 `bin/data/{cn,eng}/` 各一份
 - 标题严格单行，**参数入图例、标题留目标**（如 `±3σ=4.56e-16` 放图例，标题只写验证目标）
 - 统一走 `run_visualization`，禁引入第三方绘图库
 
@@ -146,23 +146,33 @@ AI 只能勾选/取消已有复选框，禁止新增/编辑任何文字（日期
 
 ## 项目结构约定
 
+项目按**领域**就地存放，不集中到一个全局项目文件夹里：
+
 ```
-utils/                           # 跨项目共享代码
-projects/
-  [category]/
-    project_xx_descriptor/
-      src/
-        lib/                     # 项目内部函数（不可独立运行）
-        scripts/                 # 可复用脚本
-        tests/                   # 单元测试
-        main/                    # 实验入口
-      outputs/
-        cn/experiment_XX_descriptor/{figures,data}/
-        eng/experiment_XX_descriptor/{figures,data}/
+<领域根>/                        # 如 D:\...\programming\Matlab\
+  utils/                         # 跨项目共享代码（与 projects/ 同级）
+  projects/
+    <分类>/                      # 如 postgraduate/
+      <缩写>_<编号>/             # 如 pg_01/
+        dev/                     # 开发相关（原型、过程记录）
+        src/
+          lib/                   # 项目内部函数（不可独立运行）
+          scripts/               # 可复用脚本
+          tests/                 # 单元测试
+          main/                  # 实验入口（experiment_XX_xxx.m）
+        bin/                     # 资产与产物
+          doc/  template/        # 项目文档、模板
+          images/{cn,eng}/experiment_XX_descriptor/
+          data/{cn,eng}/experiment_XX_descriptor/
+          references/            # 参考文献
+          exports/               # 论文本体
 ```
 
+- **实验产出写 `bin/`，不再使用 `outputs/`**
+- **文件夹一律不带空格**（`pg_01`），**笔记文件可带空格**（`pg 01 note.md`）——笔记给人读、代码给机器跑，两套命名各自成立
 - **所有路径必须用相对路径**，禁止硬编码绝对路径，保证项目可移植
 - 命名：全小写 snake_case、禁止数字开头、`.m` 文件名 = 主函数名
+- 目录名只是默认约定：已有项目初始化时扫描实际目录自动适配，不强行改名、不强制迁移
 
 ---
 
@@ -187,7 +197,7 @@ projects/
 - 实验报告 → 直接写入 Obsidian；LaTeX `.tex` → **必须用户确认后写入**
 - 框架优先：先贴章节骨架给用户审阅，逐节讨论确认后才写入
 - **所有数值必须来自实验报告**，禁止从论文照抄、禁止编造
-- 中文论文引用中文图片（`results/cn/`），英文论文引用英文图片（`results/eng/`）
+- 中文论文引用中文图片（`bin/images/cn/`），英文论文引用英文图片（`bin/images/eng/`）
 
 ---
 

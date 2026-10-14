@@ -9,22 +9,27 @@
 | report | `<project_report_path>` |
 | 参考文献 | `<project_ref_path>` |
 | schedule | `<project_schedule_path>` |
-| 论文文件夹 | `<papers_dir_path>`（可在项目内，如 `references/`） |
+| 论文文件夹 | `<papers_dir_path>`（项目内默认 `bin/references/`） |
 
 ## 项目仓库
 
 ```
-<project_root>/                  # 用户指定的项目根目录（所有依赖的公共祖先）
+<领域根>/                        # 领域根（所有依赖的公共祖先）
   utils/                         # 跨项目共享（如存在）
   projects/
-    [category]/
-      project_XX/
+    <分类>/
+      <缩写>_<编号>/             # 本项目
+        dev/                     # 开发相关（原型、过程记录）
         src/
           lib/                   # 项目内部函数依赖
           scripts/               # 可复用脚本
           tests/                 # 单元测试
           main/                  # 实验入口
-        outputs/                  # 实验产出
+        bin/                     # 资产与产物
+          images/                # 实验图片（{cn,eng}/experiment_XX/）
+          data/                  # 实验数据（{cn,eng}/experiment_XX/）
+          references/            # 参考文献
+          exports/               # 论文本体
         ...                      # 实际目录由初始化扫描确定
 ```
 
@@ -41,7 +46,8 @@
 | `<../到 utils 的层数>/utils/` | 仓库根工具库 |
 | `../lib/` | 项目内部函数 |
 | `../scripts/` | 可复用脚本 |
-| `../../outputs/experiment_XX_xxx/` | 实验产出目录（含 `figures/`、`data/`） |
+| `../../bin/images/{cn,eng}/experiment_XX_xxx/` | 实验图表目录（PNG） |
+| `../../bin/data/{cn,eng}/experiment_XX_xxx/` | 实验数据目录（MAT、CSV） |
 
 ### 路径添加（MATLAB）
 
@@ -54,13 +60,17 @@ addpath(genpath('../scripts/'));
 
 ### 读写文件
 
-产出保存到 `../../outputs/experiment_XX_xxx/` 下对应子文件夹，禁止写到项目外路径。
+产出保存到 `../../bin/{images,data}/{cn,eng}/experiment_XX_xxx/` 下对应子目录，禁止写到项目外路径。中英双语按语言循环，图与数据分列：
 
 ```matlab
-out_pic = '../../outputs/experiment_01_xxx/figures/';
-out_data = '../../outputs/experiment_01_xxx/data/';
-if ~exist(out_pic, 'dir'), mkdir(out_pic); end
-save([out_data 'results.mat'], ...);
+langs = {'cn', 'eng'};
+for i = 1:numel(langs)
+    out_pic  = ['../../bin/images/' langs{i} '/experiment_01_xxx/'];
+    out_data = ['../../bin/data/'   langs{i} '/experiment_01_xxx/'];
+    if ~exist(out_pic,  'dir'), mkdir(out_pic);  end
+    if ~exist(out_data, 'dir'), mkdir(out_data); end
+    save([out_data 'results.mat'], ...);
+end
 ```
 
 > **注意：** MATLAB 的 `addpath` 相对路径基于 `pwd`（当前工作目录），非脚本文件位置。务必从脚本所在目录运行（`cd` 到 `src/main/` / `src/tests/` / `src/scripts/` 后再执行），否则相对路径会解析错误。

@@ -118,7 +118,7 @@ All AI output must follow these rules so the user can copy-paste directly into O
 - 短标签（日期、结论）同行；多行内容（参数、指标、备注）标签独占一行，内容下一行 Tab 缩进
 - 指标项每条独立一行，括号内标注通过/未通过
 - 实验重新运行后更新对应 H3 块，不重复追加
-- **产出路径**：若实验生成图片/数据，在备注中注明 `outputs/{cn,eng}/experiment_XX_xxx/` 下的产出路径
+- **产出路径**：若实验生成图片/数据，在备注中注明 `bin/{images,data}/{cn,eng}/experiment_XX_xxx/` 下的产出路径
 - **LaTeX 参数名**：报告中所有数学变量名必须用 LaTeX 数学模式（`$T_{sim}$`、`$r_\omega$`、`$A_z$`），禁止使用代码风格下划线（`T_sim`、`r_omega`）。文件名/函数名仍用 `` `backtick` `` 包裹（`` `split_matrices_and_cov` ``）。
 - **科学计数法**：极小/极大数值用 LaTeX 乘法（`$1.23 \times 10^{-15}$`），不用 `1.23e-15`
 
@@ -367,12 +367,15 @@ src.md 结构：`# scripts` → `# lib`（按论文推导链分阶段）→ `# t
 
 ## Folder naming
 
+**文件夹一律不带空格**（笔记是另一套规则：小写 + 空格，见 File naming）。两套各自成立，不互相拉平。
+
 | 规则 | 示例 |
 |---|---|
-| 全小写 snake_case，下划线分隔 | `src/lib/`, `src/scripts/`, `outputs/cn/experiment_01/` |
-| 能加复数加复数 | `projects/`, `scripts/`, `tests/`, `outputs/`, `utils/` |
-| 不可数/不适合复数保持单数 | `lib/`, `main/`, `data/`, `src/` |
-| 禁止数字开头 | ❌ `01_project/` → ✅ `project_01_distributed_fault_monitoring/` |
+| 全小写 snake_case，下划线分隔 | `src/lib/`, `src/scripts/`, `bin/images/cn/experiment_01/` |
+| 能加复数加复数 | `projects/`, `scripts/`, `tests/`, `utils/` |
+| 不可数/不适合复数保持单数 | `lib/`, `main/`, `data/`, `src/`, `bin/` |
+| 禁止数字开头 | ❌ `01_project/` → ✅ `pg_01/`、`experiment_01_xxx/` |
+| 项目文件夹 = `分类缩写_编号` | `pg_01/`, `js_03/`（跟项目登记表保持一致） |
 | 文件夹是限定词，不重复命名 | `tools/resources/` 非 `tools/tool_resources/` |
 
 **脚本代码中**（`.m` 文件）：

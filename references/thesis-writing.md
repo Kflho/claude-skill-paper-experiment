@@ -8,7 +8,7 @@
 |---|---|---|
 | 实验报告 | Obsidian Note（`{项目名} note.md` → `## 实验报告`） | **直接写入**，无需确认。跑完实验立即更新。 |
 | 流程/架构复选框 | Obsidian Note（`# 流程` / `# 架构`） | **直接更新**。标记完成状态、补充结果摘要。 |
-| LaTeX `.tex` 文件 | `latex/` 目录下的 `.tex` 文件 | **必须用户确认后写入**。先在对话中贴草案 → 用户确认 → 再写入 tex。 |
+| LaTeX `.tex` 文件 | 论文输出目录（项目内默认 `bin/exports/`）下的 `.tex` 文件 | **必须用户确认后写入**。先在对话中贴草案 → 用户确认 → 再写入 tex。 |
 | LaTeX 编译 | `latexmk -pdf` | 写入 tex 后可立即编译验证，但**写入本身需要确认**。 |
 
 **铁律：跑完实验 → 写 Obsidian（直接）。写完 Obsidian → 贴草案给用户 → 用户说"可以写" → 写 tex。不跳过用户确认直接改 tex。**
@@ -19,15 +19,15 @@
 
 | 路径项 | CLAUDE.md 段 | 示例 |
 |---|---|---|
-| LaTeX 文件夹 | `## Scientific Research Paths` → `latex 文件夹` | `D:/.../pg_01/latex/` |
-| MATLAB 源码目录 | `## Scientific Research Paths` → `MATLAB 项目根目录` | `D:/.../project_01_distributed_fault_monitoring/src/` |
-| results 目录 | `## Scientific Research Paths` → `results 文件夹` | `D:/.../pg_01/results/` |
+| 论文输出目录 | `## Scientific Research Paths` → `论文输出目录` | `D:/.../pg_01/bin/exports/` |
+| MATLAB 源码目录 | `## Scientific Research Paths` → `MATLAB 项目根目录` | `D:/.../pg_01/src/` |
+| 图片目录 | 项目内固定 `bin/images/`（无需单列路径项） | `D:/.../pg_01/bin/images/` |
 
 ## 编译环境
 
 ### latexmkrc
 
-检查 LaTeX 文件夹下是否有 `.latexmkrc`：
+检查论文输出目录下是否有 `.latexmkrc`：
 
 - **有** → 直接使用
 - **没有，但存在 `.tex` 文件** → 分析主文件的 `\documentclass`、bib 引擎、编译引擎，自动生成合适的 `.latexmkrc`：
@@ -44,7 +44,7 @@
 ### 编译命令
 
 ```bash
-cd "<latex 文件夹>" && latexmk -pdf <主文件名>.tex
+cd "<论文输出目录>" && latexmk -pdf <主文件名>.tex
 ```
 
 编译失败时报告具体错误行，不静默跳过。
@@ -92,7 +92,7 @@ cd "<latex 文件夹>" && latexmk -pdf <主文件名>.tex
 1. **提案** — 在对话中贴出该节的 markdown 草案（含完整段落、公式、数值、引用），标注数据来源
 2. **讨论** — 用户审阅数值是否准确、措辞是否恰当、结论是否妥当。修改直到用户确认
 3. **写入** — 用户确认后，将内容写入 `.tex` 文件（用 Edit 工具替换对应的 `% TODO` 注释块）
-4. **编译** — 写入后立即 `latexmk -pdf` 编译验证：`cd "<latex 文件夹>" && latexmk -pdf v1.0.tex`
+4. **编译** — 写入后立即 `latexmk -pdf` 编译验证：`cd "<论文输出目录>" && latexmk -pdf v1.0.tex`
 5. **下一节** — 编译通过后进入下一节，重复 1-4
 
 ### Step 4：完成
@@ -111,5 +111,5 @@ cd "<latex 文件夹>" && latexmk -pdf <主文件名>.tex
 4. **每节写完立即编译**。不攒到最后一次性编译——定位错误困难
 5. **对照 MATLAB 源码**。写仿真参数时必须读 `create_model_1.m` / `init_parameters.m` 确认矩阵数值、噪声协方差、计算中心划分
 6. **公式编号不重复**。Chapter 5 是仿真章节，不定义新公式编号；引用前文章节公式用 `Eq.~(27)` 等形式
-7. **图片路径**：中文论文引用 `../results/cn/<filename>`，英文论文引用 `../results/eng/<filename>`（**中文论文 → 中文图片，英文论文 → 英文图片**）；语言无关图（拓扑/原理示意图）放 `../results/` 根目录共用。图片由 MATLAB 实验脚本生成，不在此阶段重新生成
+7. **图片路径**：中文论文引用 `../bin/images/cn/experiment_XX/<filename>`，英文论文引用 `../bin/images/eng/experiment_XX/<filename>`（**中文论文 → 中文图片，英文论文 → 英文图片**）；语言无关图（拓扑/原理示意图）放 `../bin/images/` 根目录共用。图片由实验脚本生成，不在此阶段重新生成
 8. **图片只标注论文参数** → 见 [SKILL.md 论文写作铁律 #4](../SKILL.md)。

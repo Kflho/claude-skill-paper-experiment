@@ -36,8 +36,8 @@
 > |---|--------|------|:---:|
 > | 1 | **Obsidian vault 路径** | vault 根目录 | ✅ 必需 |
 > | 2 | **项目名称** | 如 `pg 04`（Obsidian 文件名用小写+空格，不用下划线） | ✅ 必需 |
-> | 3 | **论文文件夹路径** | 存放论文 PDF/markdown 的目录（可在项目内，如 `references/`） | ✅ 必需 |
-> | 4 | **LaTeX 文件夹路径** | 存放 `v1.0.tex`、`.latexmkrc` 的目录 | 写论文时必需 |
+> | 3 | **论文文件夹路径** | 存放论文 PDF/markdown 的目录（项目内默认 `bin/references/`） | ✅ 必需 |
+> | 4 | **论文输出目录** | 存放 LaTeX 论文本体（`v1.0.tex`、`.latexmkrc`）的目录（项目内默认 `bin/exports/`） | 写论文时必需 |
 > | 5 | **MATLAB 项目根目录** | 实验脚本所在（含 `src/main/`、`src/lib/` 等） | 写仿真章节时必需 |
 >
 > 你的五文件叫什么名字？（默认：`{项目名} note.md`、`{项目名} src.md`、`{项目名} report.md`、`{项目名} 参考文献.md`、`{项目名} schedule.md`）
@@ -55,7 +55,7 @@
 > - 参考文献: `{vault}/{项目名} 参考文献.md`
 > - schedule: `{vault}/{项目名} schedule.md`
 > - 论文文件夹: `<用户提供的路径>`
-> - LaTeX 文件夹: `<用户提供的路径>`（如未提供则标注 `(pending)`）
+> - 论文输出目录: `<用户提供的路径>`（如未提供则标注 `(pending)`）
 > - MATLAB 项目根目录: `<用户提供的路径>`（如未提供则标注 `(pending)`）
 >
 > 这些路径对吗？
@@ -137,7 +137,8 @@ __pycache__/
 *.pyc
 
 # 实验产出（数据大，不追踪）
-outputs/
+bin/images/
+bin/data/
 
 # Obsidian（不在代码仓内）
 .obsidian/
@@ -169,21 +170,21 @@ outputs/
 
 ### 4.1 扫描所有含 .m 的文件夹
 
-拿到根目录后，扫描其下所有包含 `.m` 文件的文件夹（排除 `.git/`、`.Old/`、`Output/`、`outputs/`、`node_modules/` 等）：
+拿到根目录后，扫描其下所有包含 `.m` 文件的文件夹（排除 `.git/`、`.old/`、`bin/`、`dev/`、`Output/`、`outputs/`、`node_modules/` 等）：
 
 ```bash
-find "<root>" -name "*.m" -not -path "*/.git/*" -not -path "*/.Old/*" \
-  -not -path "*/Output/*" -not -path "*/outputs/*" | sed 's|/[^/]*\.m$||' | sort -u
+find "<root>" -name "*.m" -not -path "*/.git/*" -not -path "*/.old/*" \
+  -not -path "*/bin/*" -not -path "*/dev/*" | sed 's|/[^/]*\.m$||' | sort -u
 ```
 
 这会得到类似：
 ```
 <root>/utils/calculations
 <root>/utils/visualizations
-<root>/projects/postgraduate/project_01/src/lib
-<root>/projects/postgraduate/project_01/src/scripts
-<root>/projects/postgraduate/project_01/src/tests
-<root>/projects/postgraduate/project_01/src/main
+<root>/projects/postgraduate/pg_01/src/lib
+<root>/projects/postgraduate/pg_01/src/scripts
+<root>/projects/postgraduate/pg_01/src/tests
+<root>/projects/postgraduate/pg_01/src/main
 ```
 
 ### 4.2 确定项目工作目录
