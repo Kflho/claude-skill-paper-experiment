@@ -57,6 +57,15 @@ git clone https://github.com/mattpocock/skills.git ~/.claude/skills/mattpocock
 
 `grilling`（拷问实验设计）、`pdf-converter`（PDF→Markdown）、`research`（多源调研）、`prototype`（原型验证）、`tdd`（测试驱动实现）、`code-review` / `simplify`（审查）、`codebase-design`（接口设计）。
 
+### 配套 skill（可选，本地）
+
+**`proposal-pictures`** —— 申报书/技术方案的结构示意图规范（总体框架图、技术路线图、研究计划矩阵：
+版式类别、配色与字体令牌、文字与符号规范、指标表述规范）＋ 几何自检脚本（文字越界/压线/禁用符号）。
+写申报材料时用；只做实验与论文时不需要。
+
+分工一句话：**本 skill 管"代码出的数据图"（PNG，双语，进论文），`proposal-pictures` 管"手绘式的结构图"（SVG，进申报书）**；
+两者共享「先设计后出图 / 术语与符号有出处 / 出图后必须看图」三条原则，已互相引用。
+
 验证安装：
 
 ```bash
@@ -126,6 +135,9 @@ test -d ~/.claude/skills/grilling && echo "[OK] grilling"
 - **中英双语输出**：`bin/images/{cn,eng}/` 与 `bin/data/{cn,eng}/` 各一份
 - 标题严格单行，**参数入图例、标题留目标**（如 `±3σ=4.56e-16` 放图例，标题只写验证目标）
 - 统一走 `run_visualization`，禁引入第三方绘图库
+- **分工**：本节只管**实验数据图**（代码出图 → PNG）；申报书/技术方案的结构示意图（总体框架图、技术路线图、
+  研究计划矩阵，手写 SVG）走配套 skill **`proposal-pictures`**——两者共享「先设计后出图 / 术语与符号有出处 /
+  出图后必须看图」三条原则，已互相引用，勿各写一套
 
 ### MATLAB 依赖检测
 写脚本前用 `exist('func','file')` 检测（**不用** `license('test',...)`——有许可证 ≠ 已安装），三级处理：
